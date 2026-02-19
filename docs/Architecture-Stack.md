@@ -9,11 +9,30 @@
 <div align=center>
 
 # Architecture Stack
-  
+
 </div>
+
+**Chapters**
+
+* [Tech Stack](#tech-stack)
+* [How It Works](#how-it-works)
+
+
+---
 
 # Tech Stack
 Proposed text stack for building the model architecture
+
+**Table of Contents**
+* [Deep Learning Framework](#deep-learning-framework)
+* [Programming Language](#programming-language)
+* [Secure Hardware/Execution](#secure-hardwareexecution)
+* [Data Processing and Tokenisation](#data-processing-and-tokenisation)
+* [Text Segmentation](#text-segmentation)
+* [Model Architecture Specifics](#model-architecture-specifics)
+  * [ISO Documents](#iso-documents)
+  * [High Acc NLU](#hig-acc-nlu)
+* [Database Management](#database-management)
 
 </div>
 
@@ -46,7 +65,7 @@ To establish TEEs, the hardware would require one of the following:
     * Memory mapped storage *(stored in secure folders)*
 
 
-## Text Sementation
+## Text Segmentation
 
 * GraphSeg *(Unsupervised Algorithm)*
 
@@ -84,16 +103,28 @@ How the model will operate, align itself, and component expansion
 
 </div>
 
+**Table of Contents**
+* [Front-End](#front-end)
+  * [Query Module](#query-module)
+  * [Class Comparison Engine](#class-comparison-engine)
+  * [Interpretability Dashboard](#interpretability-dashboard)
+* [Back-End](#back-end)
+  * [Data Layer Management](#data-layer-management)
+  * [Machine Learning Layer Management](#machine-learning-layer-management)
+  * [Risk and Security Management](#risk-and-security-management)
+
 ## Front-End
 
-* Query Module
+### Query Module
   * Structure Queries *(Incoming)*
   * Natural Language Queries *(Incoming)*
   * User Interaction *(Gateway)*
-* Class Comparison Engine
+    
+### Class Comparison Engine
   * Matches ISO control attributes against user query *(Model Prediction Classes)*
   * Returns relevant policy segments *(User Specific)*
-* Interpretability Dashboard
+    
+### Interpretability Dashboard
   * Attention Heatmap *(Display)*
   * Highlights flagged words/tokens *(Display)*
   * Compliance vs Non-compliance *(Number x Report)*
@@ -101,7 +132,7 @@ How the model will operate, align itself, and component expansion
 
 ## Back-End
 
-* Data Layer Management
+### Data Layer Management
   * Policy Extraction
     * Crawler
     * Document Parser
@@ -112,7 +143,8 @@ How the model will operate, align itself, and component expansion
   * Semantic Segmentation
     * Algo to break doc into segments
     * Ensure context is kept with cliques of related sentences
-* Machine Learning Layer Management
+    
+### Machine Learning Layer Management
   * Domain-Specific Embeddings
     * Subword Embeddings
     * Train on a massive number of specific security policies
@@ -123,7 +155,8 @@ How the model will operate, align itself, and component expansion
   * Class Imbalance Handling
     * Data Augmentation
     * Class Weighting
-* Risk and Security Management
+    
+### Risk and Security Management
   * NIST AI Risk Management Framework
     * Development and Deployment Life Cycle *(Governed)*
     * Must incorporate trustworthiness, transparency, and risk mitigation *(Continuously)*
