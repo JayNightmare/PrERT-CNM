@@ -15,7 +15,32 @@ This new model purposed is called Prert-CNM (**Pr**-ivacy B-**ERT** **C**ontextu
 
 </div>
 
+**Chapters**
+
+* [Prert-CNM](#prert-cnm)
+* [LSTM Layer](#lstm-layer)
+* [Dataset](#dataset)
+* [ISO Controls](#iso-controls)
+* [Model Architecture](#model-architecture)
+* [Output](#output)
+
+---
+
 # Prert-CNM
+
+**Table of Contents**
+* [Memory](#memory)
+  * [Context](#context)
+  * [Weightings](#weightings)
+  * [Cluster Control](#cluster-control)
+* [Transformer Swaps](#lstm-layer)
+* [Fine-tuning LLMs](#lstm-layer)
+* [Synthetic Dataset Generation](#dataset)
+* [Non-Compliance Handling](#iso-controls)
+* [Policy Weighting](#iso-controls)
+* [Hierarchical Transformer](#hierarchical-transformer-uses)
+* [Multi-label Mapping](#output)
+* [Return Attributes](#returns-back)
 
 ## Memory
 
