@@ -1,4 +1,11 @@
-<div align=center>
+<p align="center">
+  <a href="./Architecture-Stack.md">Architecture Stack</a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="./README.md">README</a>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="./Model.md">Model Research</a>
+</p>
+
 
 # Tech Stack
 Proposed text stack for building the model architecture
