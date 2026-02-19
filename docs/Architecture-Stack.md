@@ -6,6 +6,11 @@
   <a href="./Model.md">Model Research</a>
 </p>
 
+<div align=center>
+
+# Architecture Stack
+  
+</div>
 
 # Tech Stack
 Proposed text stack for building the model architecture
