@@ -8,7 +8,7 @@
 
 <div align=center>
 
-# Model
+# Model Research
 Research into the different models that came before and which areas to keep and what could be improved. Privacy BERT-LSTM and Polsis were good models, however their lack of tokenization caused a bottleneck in the amount of data the model could process and keep track of. The addition of the LSTM transformer allowed for short-term memory to be kept for a longer period of time, but the word embedding was not made for longer pieces of text. 
 
 This new model purposed is called Prert-CNM (**Pr**-ivacy B-**ERT** **C**ontextual **N**eural **M**emory) increases the number of specialised parameters (increased embedding layer) and tokens (100 Input w/ 512 limit to 4096), swaps the general purpose BERT-LSTM model with the specialised mode DeBERTa v3 (with help from several other models working as helper agents) to process larger docs and hold onto more memory.
