@@ -42,8 +42,9 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 - **[Completed]** Initialized Bayesian Network graph topologies with CPD integration logic (`engine/bayesian_scorer.py`).
 - **[Completed]** Implemented end-to-end integration boundaries via `pytest` (`tests/test_pipeline.py`).
 - **[Completed]** Built dynamic JSON to DAG topology parser to ensure GDPR configs directly dictate DAG relationships (`engine/bayesian_scorer.py`).
-- **[Completed]** Scripted offline caching loader for the OPP-115 alternative mirror dataset (`data/download.py`).
-- **[Completed]** Refactored `privacy_indicators.json`, `loader.py`, and `bayesian_scorer.py` to enforce the Hierarchical Multi-Label Classification mapping (Categories -> Attributes -> Frameworks), pivoting away from the previously flat architecture.
+- [Completed] Scripted offline caching loader for the OPP-115 alternative mirror dataset (`data/download.py`).
+- [Completed] Refactored `privacy_indicators.json`, `loader.py`, and `bayesian_scorer.py` to enforce the Hierarchical Multi-Label Classification mapping (Categories -> Attributes -> Frameworks), pivoting away from the previously flat architecture.
+- [Completed] Explicitly extracted and mapped ISO/IEC 27001:2022 Annex A controls and IEEE 7002 clauses into the `privacy_indicators.json` and tightened corresponding topology tests.
 
 ## Next Steps
 

@@ -25,7 +25,7 @@
             <nav id="sidebar">
                 <ul>
                     <li>
-                        <a href="../index.html">Home</a>
+                        <a href="../../index.html">Home</a>
                     </li>
                     <li>
                         <a href="Sprint_1_Report.html">Sprint 1 Report</a>
@@ -41,44 +41,45 @@
                         <a href="Model.html"><strong>Model</strong></a>
                     </li>
                     <li><a href="README.html">README (Docs)</a></li>
-                    <li><a href="../html/CHANGELOG.html">CHANGELOG</a></li>
-                    <li><a href="../html/MEMORY.html">MEMORY</a></li>
-                    <li><a href="../html/README.html">README (Root)</a></li>
+                    <li><a href="../CHANGELOG.html">CHANGELOG</a></li>
+                    <li><a href="../MEMORY.html">MEMORY</a></li>
+                    <li><a href="../README.html">README (Root)</a></li>
                 </ul>
             </nav>
             <main>
                 <p>
-                    &lt;p align=&quot;center&quot;&gt; &lt;a
-                    href=&quot;./Architecture-Stack.md&quot;&gt;Architecture
-                    Stack&lt;/a&gt;      |      &lt;a
-                    href=&quot;./README.md&quot;&gt;README&lt;/a&gt;      |     
-                    &lt;a href=&quot;./Model.md&quot;&gt;Model
-                    Research&lt;/a&gt; &lt;/p&gt;
+                    <p align="center">
+                        <a href="Architecture-Stack.html">Architecture Stack</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="README.html">README</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a href="Model.html"><strong>Model Research</strong></a>
+                    </p>
                 </p>
-                <p>&lt;div align=center&gt;</p>
-                <h1>Model Research</h1>
-                <p>
-                    Research into the different models that came before and
-                    which areas to keep and what could be improved. Privacy
-                    BERT-LSTM and Polsis were good models, however their lack of
-                    tokenization caused a bottleneck in the amount of data the
-                    model could process and keep track of. The addition of the
-                    LSTM transformer allowed for short-term memory to be kept
-                    for a longer period of time, but the word embedding was not
-                    made for longer pieces of text.
-                </p>
-                <p>
-                    This new model purposed is called Prert-CNM
-                    (<strong>Pr</strong>-ivacy B-<strong>ERT</strong>
-                    <strong>C</strong>ontextual <strong>N</strong>eural
-                    <strong>M</strong>emory) increases the number of specialised
-                    parameters (increased embedding layer) and tokens (100 Input
-                    w/ 512 limit to 4096), swaps the general purpose BERT-LSTM
-                    model with the specialised mode DeBERTa v3 (with help from
-                    several other models working as helper agents) to process
-                    larger docs and hold onto more memory.
-                </p>
-                <p>&lt;/div&gt;</p>
+                <div align="center">
+                    <h1>Model Research</h1>
+                    <p>
+                        Research into the different models that came before and
+                        which areas to keep and what could be improved. Privacy
+                        BERT-LSTM and Polsis were good models, however their lack of
+                        tokenization caused a bottleneck in the amount of data the
+                        model could process and keep track of. The addition of the
+                        LSTM transformer allowed for short-term memory to be kept
+                        for a longer period of time, but the word embedding was not
+                        made for longer pieces of text.
+                    </p>
+                    <p>
+                        This new model purposed is called Prert-CNM
+                        (<strong>Pr</strong>-ivacy B-<strong>ERT</strong>
+                        <strong>C</strong>ontextual <strong>N</strong>eural
+                        <strong>M</strong>emory) increases the number of specialised
+                        parameters (increased embedding layer) and tokens (100 Input
+                        w/ 512 limit to 4096), swaps the general purpose BERT-LSTM
+                        model with the specialised mode DeBERTa v3 (with help from
+                        several other models working as helper agents) to process
+                        larger docs and hold onto more memory.
+                    </p>
+                </div>
                 <p><strong>Chapters</strong></p>
                 <ul>
                     <li><a href="#prert-cnm">Prert-CNM</a></li>

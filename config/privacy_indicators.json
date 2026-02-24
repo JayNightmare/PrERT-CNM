@@ -6,11 +6,17 @@
                 "collection_necessity_score": {
                     "frameworks": [
                         "GDPR:Article_5",
-                        "NIST_Privacy_Framework:CT_DP_P"
+                        "NIST_Privacy_Framework:CT_DP_P",
+                        "ISO_27001:A.8.10",
+                        "ISO_27001:A.8.11"
                     ]
                 },
                 "retention_longevity_factor": {
-                    "frameworks": ["GDPR:Article_5", "IEEE_Privacy:Retention"]
+                    "frameworks": [
+                        "GDPR:Article_5",
+                        "IEEE_Privacy:Retention",
+                        "ISO_27001:A.8.10"
+                    ]
                 }
             }
         },
@@ -19,8 +25,12 @@
                 "opt_in_clarity_index": {
                     "frameworks": [
                         "GDPR:Article_7",
-                        "NIST_Privacy_Framework:CM_PO_P"
+                        "NIST_Privacy_Framework:CM_PO_P",
+                        "IEEE_7002:Consent"
                     ]
+                },
+                "privacy_notice_readability": {
+                    "frameworks": ["ISO_27001:A.5.34", "IEEE_7002:Transparency"]
                 },
                 "withdrawal_friction_estimate": {
                     "frameworks": ["GDPR:Article_7"]
@@ -32,7 +42,8 @@
                 "encryption_at_rest": {
                     "frameworks": [
                         "GDPR:Article_32",
-                        "NIST_Privacy_Framework:PR_DS_P"
+                        "NIST_Privacy_Framework:PR_DS_P",
+                        "ISO_27001:A.8.24"
                     ]
                 }
             }

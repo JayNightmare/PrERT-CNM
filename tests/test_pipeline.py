@@ -80,6 +80,8 @@ class TestSyntheticRiskPipeline:
         assert engine.network.has_edge("collection_necessity_score", "Data_Minimization")
         assert engine.network.has_edge("Data_Minimization", "GDPR_Risk")
         assert engine.network.has_edge("Data_Minimization", "NIST_Privacy_Framework_Risk")
+        assert engine.network.has_edge("Data_Minimization", "ISO_27001_Risk")
+        assert engine.network.has_edge("Transparency_and_Consent", "IEEE_7002_Risk")
 
     def test_privacy_bert_feature_extraction(self):
         # We verify that the model returns expected tensor geometries.
