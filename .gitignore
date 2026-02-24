@@ -1,6 +1,4 @@
-MEMORY.md
 .vscode
-Funding_Proposal.*
 __pycache__
 .venv
 .pytest_cache
