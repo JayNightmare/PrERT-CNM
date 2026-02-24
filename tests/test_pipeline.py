@@ -32,8 +32,9 @@ class TestSyntheticRiskPipeline:
         config_path = base_dir / "config" / "privacy_indicators.json"
         
         config = load_config(config_path)
-        assert config.frameworks is not None
-        assert "GDPR" in config.frameworks
+        assert config.categories is not None
+        assert "Data_Minimization" in config.categories
+        assert "collection_necessity_score" in config.categories["Data_Minimization"].attributes
         
         # Test validation error
         with pytest.raises(FileNotFoundError):
@@ -73,10 +74,12 @@ class TestSyntheticRiskPipeline:
         engine = BayesianRiskEngine()
         engine.build_topology_from_config(config)
 
-        # Expected edge mapped from privacy_indicators.json
-        # collection_necessity_score -> Article_5_Data_Minimization -> GDPR_Risk
-        assert engine.network.has_edge("collection_necessity_score", "Article_5_Data_Minimization")
-        assert engine.network.has_edge("Article_5_Data_Minimization", "GDPR_Risk")
+        # Expected edge mapped from hierarchical privacy_indicators.json
+        # collection_necessity_score -> Data_Minimization
+        # Data_Minimization -> GDPR_Risk
+        assert engine.network.has_edge("collection_necessity_score", "Data_Minimization")
+        assert engine.network.has_edge("Data_Minimization", "GDPR_Risk")
+        assert engine.network.has_edge("Data_Minimization", "NIST_Privacy_Framework_Risk")
 
     def test_privacy_bert_feature_extraction(self):
         # We verify that the model returns expected tensor geometries.

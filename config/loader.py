@@ -17,27 +17,18 @@ import json
 from pathlib import Path
 from pydantic import BaseModel, Field
 
-class IndicatorConfig(BaseModel):
-    indicators: List[str] = Field(min_length=1, description="List of measurable privacy indicators for a specific principle.")
+class AttributeConfig(BaseModel):
+    frameworks: List[str] = Field(min_length=1, description="List of framework clauses this attribute satisfies (e.g. 'GDPR:Article_5').")
 
-class FrameworkConfig(BaseModel):
-    # Mapping of Principles (e.g. 'Article_5_Data_Minimization') to their IndicatorConfig
-    model_config = {"extra": "allow"}
-
-    def get_principles(self) -> Dict[str, IndicatorConfig]:
-        """Returns all dynamically loaded principles."""
-        return {
-            k: IndicatorConfig(**v) if isinstance(v, dict) else v 
-            for k, v in self.model_extra.items() 
-            if k != "indicators"
-        }
+class CategoryConfig(BaseModel):
+    attributes: Dict[str, AttributeConfig] = Field(description="Dictionary of bottom-level attributes mapped to their framework requirements.")
 
 class RootConfig(BaseModel):
     _comment: Optional[str] = None
-    frameworks: Dict[str, FrameworkConfig]
+    categories: Dict[str, CategoryConfig] = Field(description="Top-level privacy categories containing bottom-level attributes.")
 
 def load_config(file_path: str | Path) -> RootConfig:
-    """Loads and validates the privacy indicators JSON configuration."""
+    """Loads and validates the hierarchical privacy indicators JSON configuration."""
     path = Path(file_path)
     if not path.is_file():
         raise FileNotFoundError(f"Configuration file not found: {path}")

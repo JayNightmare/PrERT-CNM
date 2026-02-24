@@ -19,6 +19,8 @@ from pgmpy.models import DiscreteBayesianNetwork
 from pgmpy.inference import VariableElimination
 from pgmpy.factors.discrete import TabularCPD
 
+from config.loader import RootConfig
+
 class BayesianRiskEngine:
     def __init__(self):
         self.network = DiscreteBayesianNetwork()
@@ -28,19 +30,31 @@ class BayesianRiskEngine:
         """Constructs the DAG from mapped legal standards."""
         self.network.add_edges_from(dependencies)
 
-    def build_topology_from_config(self, config):
+    def build_topology_from_config(self, config: RootConfig):
         """
         Dynamically generates DAG edges based on the parsed Pydantic settings.
-        Maps each indicator (child) to its overarching principle (parent).
+        Maps each attribute (child) to its overarching category (parent)
+        and each category to the framework risk composite node.
         """
         edges = []
-        for framework_name, framework_data in config.frameworks.items():
-            for principle_name, indicator_config in framework_data.get_principles().items():
-                for indicator in indicator_config.indicators:
-                    edges.append((indicator, principle_name))
+        frameworks_found = set()
+        
+        for category_name, category_data in config.categories.items():
+            for attribute_name, attribute_config in category_data.attributes.items():
+                # Attribute -> Top-level Category
+                edges.append((attribute_name, category_name))
                 
-                # Link all principles back to a single composite risk node for the framework
-                edges.append((principle_name, f"{framework_name}_Risk"))
+                # Top-level Category -> Specific Framework Risk (e.g., GDPR_Risk)
+                for framework_clause in attribute_config.frameworks:
+                    # e.g., 'GDPR:Article_5' -> 'GDPR'
+                    framework_name = framework_clause.split(":")[0]
+                    frameworks_found.add(framework_name)
+                    # We link the attribute to the category, and the category to the framework
+                    # In a fully connected DAG: attribute -> category -> framework risk
+                    # Prevent duplicate edges
+                    edge = (category_name, f"{framework_name}_Risk")
+                    if edge not in edges:
+                        edges.append(edge)
 
         self.build_topology(edges)
         

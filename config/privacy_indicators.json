@@ -1,24 +1,41 @@
 {
-	"_comment": "Purpose: Maps abstract international privacy standards into verifiable, quantifiable metrics (Week 1 Objective). We treat frameworks dynamically, permitting seamless injection of new indicators without code changes. Adherence to standards is modeled as a set of probabilistic constraints rather than rigid boolean checks.",
-	"frameworks": {
-		"GDPR": {
-			"Article_5_Data_Minimization": {
-				"indicators": [
-					"collection_necessity_score",
-					"retention_longevity_factor"
-				]
-			},
-			"Article_7_Consent": {
-				"indicators": [
-					"opt_in_clarity_index",
-					"withdrawal_friction_estimate"
-				]
-			}
-		},
-		"NIST_Privacy_Framework": {
-			"CT_DP_P": {
-				"indicators": ["transparent_processing_score"]
-			}
-		}
-	}
+    "_comment": "Purpose: Maps abstract international privacy standards into a verifiable, hierarchical knowledge graph. Top-level categories contain bottom-level attributes, which map explicitly to clauses across multiple privacy frameworks simultaneously.",
+    "categories": {
+        "Data_Minimization": {
+            "attributes": {
+                "collection_necessity_score": {
+                    "frameworks": [
+                        "GDPR:Article_5",
+                        "NIST_Privacy_Framework:CT_DP_P"
+                    ]
+                },
+                "retention_longevity_factor": {
+                    "frameworks": ["GDPR:Article_5", "IEEE_Privacy:Retention"]
+                }
+            }
+        },
+        "Transparency_and_Consent": {
+            "attributes": {
+                "opt_in_clarity_index": {
+                    "frameworks": [
+                        "GDPR:Article_7",
+                        "NIST_Privacy_Framework:CM_PO_P"
+                    ]
+                },
+                "withdrawal_friction_estimate": {
+                    "frameworks": ["GDPR:Article_7"]
+                }
+            }
+        },
+        "Security_and_Encryption": {
+            "attributes": {
+                "encryption_at_rest": {
+                    "frameworks": [
+                        "GDPR:Article_32",
+                        "NIST_Privacy_Framework:PR_DS_P"
+                    ]
+                }
+            }
+        }
+    }
 }

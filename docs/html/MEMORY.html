@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEMORY - Masters</title>
+    <link rel="stylesheet" href="..\css\styles.css"> 
+    <style>
+        :root {
+            --accent-color: #b366ff;
+            --accent-text-color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button id="sidebar-toggle" aria-label="Toggle Navigation">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <h1>Masters</h1>
+    </header>
+    <div class="container">
+        <nav id="sidebar">
+            
+            <ul>
+                <li><a href="..\index.html"><strong>Home</strong></a></li>
+                <li><a href="docs\Architecture-Stack.html">Architecture-Stack</a></li>
+<li><a href="docs\Funding_Proposal.html">Funding_Proposal</a></li>
+<li><a href="docs\how_to_use.html">how_to_use</a></li>
+<li><a href="docs\Model.html">Model</a></li>
+<li><a href="docs\README.html">README</a></li>
+<li><a href="CHANGELOG.html">CHANGELOG</a></li>
+<li><a href="MEMORY.html">MEMORY</a></li>
+<li><a href="README.html">README</a></li>
+            </ul>
+        
+        </nav>
+        <main>
+            <h1>Project Memory: PrERT-CNM</h1>
+<h2>Identity &amp; Role</h2>
+<p>AI-Driven Privacy Risk Quantification Engine. Unifies transformer-based policy extraction (PrivacyBERT) with probabilistic risk modeling (Bayesian Networks). Aligns unstructured legal text against international standards (ISO/IEC, NIST, GDPR) using quantifiable indicators.</p>
+<h2>Current Project State</h2>
+<p>The project architecture and Month 1 sprint map are actively being scaffolded.</p>
+<ul>
+<li><strong>Sprin Roadmap (Month 1):</strong>
+<ul>
+<li>Week 1: Map measurable privacy principles into quantifiable indicators (<code>config/</code>).</li>
+<li>Week 2: Fine-tune PrivacyBERT on OPP-115 and Polisis datasets (<code>models/</code>).</li>
+<li>Week 3: Build the Bayesian risk scoring engine using pgmpy (<code>engine/</code>).</li>
+<li>Week 4: Generate synthetic datasets and build the testing pipeline (<code>tests/</code>).</li>
+</ul>
+</li>
+</ul>
+<h2>Activity Requirements: Month 1 Deep Analysis</h2>
+<p><strong>Objective</strong>: Map measurable privacy principles from ISO/IEC, NIST, GDPR, IEEE and international data protection regulations into privacy indicators.</p>
+<p><strong>Analysis of Current State vs. Actual Requirements</strong>:
+Our initial execution scaffolded a basic JSON representation mapping abstract GDPR concepts (e.g., Article 5) to placeholder indicators. However, reviewing <code>docs/Architecture-Stack.md</code> and <code>docs/Model.md</code>, this is entirely insufficient. The final PrERT-CNM (Privacy BERT Contextual Neural Memory) model requires a <strong>Hierarchical Multi-Label Classification</strong> system (Top Level: High-level ISO domain; Bottom Level: Fine-grained requirements like Encryption Standards).</p>
+<p>Therefore, Month 1's true deliverable must structurally align with this 2-stage model design.</p>
+<p><strong>Deep Work Breakdown for Month 1:</strong></p>
+<ol>
+<li><strong>Taxonomy Structuring (Top vs. Bottom Level):</strong> We must define universally applicable <em>Top-Level Categories</em> (e.g., Access Control, Data Retention). Within these, we define the <em>Bottom-Level Attributes</em> (e.g., Password Length, Encryption Standards).</li>
+<li><strong>Cross-Framework Overlays (Universal Schema):</strong> The mapping must unify ISO/IEC, NIST, GDPR, and IEEE under communal privacy indicators. A single fine-grained attribute must link to its specific clause in GDPR (Art 32) and NIST AI RMF simultaneously.</li>
+<li><strong>Measurability &amp; Scoring Bounds:</strong> Indicators must be inherently quantifiable (e.g., Boolean existence flags or probability distributions) to properly parameterize the Bayesian Risk engine.</li>
+<li><strong>Data Structure Overhaul (<code>config/privacy_indicators.json</code>):</strong> The current JSON loader expects a flat list of indicators per specific framework principle. This must be entirely refactored into a hierarchical knowledge graph that the CNM (Contextual Neural Memory) can traverse to apply specialized, fine-grained context rules.</li>
+</ol>
+<p><strong>Pivot Strategy:</strong> The <code>config</code> module mapping logic must be completely rewritten. We need to draft a comprehensive schema reflecting the Multi-Label Hierarchical requirements before moving on to Month 2.</p>
+<h2>Active Tasks</h2>
+<ul>
+<li>Initialized core project directories: <code>config/</code>, <code>models/</code>, <code>engine/</code>, <code>tests/</code></li>
+<li>Created <code>requirements.txt</code> with AI infrastructure dependencies (<code>transformers</code>, <code>torch</code>, <code>pgmpy</code>, <code>datasets</code>).</li>
+<li>Deployed boilerplate implementations with critical architectural commentary questioning standard approaches.</li>
+<li><strong>[Completed]</strong> Implemented structured JSON data loading with Pydantic (<code>config/loader.py</code>).</li>
+<li><strong>[Completed]</strong> Extended <code>PrivacyFeatureExtractor</code> to include Hugging Face <code>Trainer</code> loops (<code>models/privacy_bert.py</code>).</li>
+<li><strong>[Completed]</strong> Initialized Bayesian Network graph topologies with CPD integration logic (<code>engine/bayesian_scorer.py</code>).</li>
+<li><strong>[Completed]</strong> Implemented end-to-end integration boundaries via <code>pytest</code> (<code>tests/test_pipeline.py</code>).</li>
+<li><strong>[Completed]</strong> Built dynamic JSON to DAG topology parser to ensure GDPR configs directly dictate DAG relationships (<code>engine/bayesian_scorer.py</code>).</li>
+<li><strong>[Completed]</strong> Scripted offline caching loader for the OPP-115 alternative mirror dataset (<code>data/download.py</code>).</li>
+</ul>
+<h2>Next Steps</h2>
+<ul>
+<li>Execute full training sweep for Month 2 using the fetched OPP-115 corpus and the <code>PrivacyFeatureExtractor</code>.</li>
+</ul>
+<h2>Architectural Decisions</h2>
+<ul>
+<li>Decoupled Neural Extraction from Probabilistic Inference: Standard NLP text classifiers suffer from opacity and probability collapse. Using a Bayesian Network on top of the transformer representations forces the engine to explicitly manage uncertainty and causal structures, making it resilient to adversarial legal phrasing. We must remain skeptical of end-to-end differentiable solutions for compliance—explicit probabilistic maps afford auditability required by GDPR and NIST.</li>
+</ul>
+
+        </main>
+    </div>
+    <footer>
+        <p>Generated by MD to Deploy</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+
+            if (toggle && sidebar) {
+                toggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                });
+
+                // Optional: Close sidebar when clicking outside on mobile
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && 
+                        sidebar.classList.contains('active') && 
+                        !sidebar.contains(e.target) && 
+                        !toggle.contains(e.target)) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
