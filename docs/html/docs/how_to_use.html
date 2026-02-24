@@ -1,129 +1,214 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>how_to_use - Masters</title>
-    <link rel="stylesheet" href="..\..\css\styles.css"> 
-    <style>
-        :root {
-            --accent-color: #b366ff;
-            --accent-text-color: #000000;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <button id="sidebar-toggle" aria-label="Toggle Navigation">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-        <h1>Masters</h1>
-    </header>
-    <div class="container">
-        <nav id="sidebar">
-            
-            <ul>
-                <li><a href="..\..\index.html"><strong>Home</strong></a></li>
-                <li><a href="Architecture-Stack.html">Architecture-Stack</a></li>
-<li><a href="Funding_Proposal.html">Funding_Proposal</a></li>
-<li><a href="how_to_use.html">how_to_use</a></li>
-<li><a href="Model.html">Model</a></li>
-<li><a href="README.html">README</a></li>
-<li><a href="..\CHANGELOG.html">CHANGELOG</a></li>
-<li><a href="..\MEMORY.html">MEMORY</a></li>
-<li><a href="..\README.html">README</a></li>
-            </ul>
-        
-        </nav>
-        <main>
-            <h1>How to Use PrERT-CNM</h1>
-<p>This document provides a comprehensive guide on utilizing the deliverables produced over the four-month lifecycle of the PrERT-CNM project. It outlines expected results, execution commands, and local deployment strategies.</p>
-<h2>Deployment Strategy and Environment Setup</h2>
-<p>The PrERT-CNM engine is designed as a modular Python package. To deploy the system locally or on a continuous integration server, follow these steps to bootstrap the environment.</p>
-<h3>1. Initialize Virtual Environment</h3>
-<p>It is highly recommended to isolate dependencies.</p>
-<pre><code class="language-bash">python3 -m venv .venv
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>how_to_use - Masters</title>
+        <link rel="stylesheet" href="..\..\css\styles.css" />
+        <style>
+            :root {
+                --accent-color: #b366ff;
+                --accent-text-color: #000000;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <button id="sidebar-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <h1>Masters</h1>
+        </header>
+        <div class="container">
+            <nav id="sidebar">
+                <ul>
+                    <li>
+                        <a href="../index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="Sprint_1_Report.html">Sprint 1 Report</a>
+                    </li>
+                    <li>
+                        <a href="Architecture-Stack.html">Architecture-Stack</a>
+                    </li>
+                    <li>
+                        <a href="Funding_Proposal.html">Funding_Proposal</a>
+                    </li>
+                    <li>
+                        <a href="how_to_use.html"
+                            ><strong>how_to_use</strong></a
+                        >
+                    </li>
+                    <li>
+                        <a href="Model.html">Model</a>
+                    </li>
+                    <li><a href="README.html">README (Docs)</a></li>
+                    <li><a href="../html/CHANGELOG.html">CHANGELOG</a></li>
+                    <li><a href="../html/MEMORY.html">MEMORY</a></li>
+                    <li><a href="../html/README.html">README (Root)</a></li>
+                </ul>
+            </nav>
+            <main>
+                <h1>How to Use PrERT-CNM</h1>
+                <p>
+                    This document provides a comprehensive guide on utilizing
+                    the deliverables produced over the four-month lifecycle of
+                    the PrERT-CNM project. It outlines expected results,
+                    execution commands, and local deployment strategies.
+                </p>
+                <h2>Deployment Strategy and Environment Setup</h2>
+                <p>
+                    The PrERT-CNM engine is designed as a modular Python
+                    package. To deploy the system locally or on a continuous
+                    integration server, follow these steps to bootstrap the
+                    environment.
+                </p>
+                <h3>1. Initialize Virtual Environment</h3>
+                <p>It is highly recommended to isolate dependencies.</p>
+                <pre><code class="language-bash">python3 -m venv .venv
 source .venv/bin/activate
 </code></pre>
-<h3>2. Install Dependencies</h3>
-<p>Install the required machine learning, probabilistic, and data processing libraries.</p>
-<pre><code class="language-bash">pip install -r requirements.txt
+                <h3>2. Install Dependencies</h3>
+                <p>
+                    Install the required machine learning, probabilistic, and
+                    data processing libraries.
+                </p>
+                <pre><code class="language-bash">pip install -r requirements.txt
 </code></pre>
-<h3>3. Handle HuggingFace Caching</h3>
-<p>By default, HuggingFace Hub attempts to cache heavy datasets and models in your global user directory. We recommend scoping this to the project directory to prevent system-wide permission errors.</p>
-<pre><code class="language-bash">export HF_HOME=&quot;$(pwd)/.hf_cache&quot;
+                <h3>3. Handle HuggingFace Caching</h3>
+                <p>
+                    By default, HuggingFace Hub attempts to cache heavy datasets
+                    and models in your global user directory. We recommend
+                    scoping this to the project directory to prevent system-wide
+                    permission errors.
+                </p>
+                <pre><code class="language-bash">export HF_HOME=&quot;$(pwd)/.hf_cache&quot;
 </code></pre>
-<hr>
-<h2>Month-by-Month Usage Guide</h2>
-<h3>Month 1: Standards Mapping</h3>
-<p><strong>Component:</strong> <code>config/</code> layer.</p>
-<p><strong>How to Use:</strong>
-The primary deliverable is the deterministic mapping of privacy regulations to software configurations. You can interact with the current state of mappings by editing <code>config/privacy_indicators.json</code>.</p>
-<p><strong>Expected Result:</strong>
-When executed through the loader, the system rigidly enforces GDPR/NIST structural integrity using Pydantic models. Any malformed mappings will crash the pipeline immediately, protecting the Bayesian Engine from processing invalid data.</p>
-<p><strong>Commands:</strong>
-To verify the configuration logic holds true against the mappings:</p>
-<pre><code class="language-bash">pytest tests/test_pipeline.py -k &quot;test_config_validation&quot;
+                <hr />
+                <h2>Month-by-Month Usage Guide</h2>
+                <h3>Month 1: Standards Mapping</h3>
+                <p><strong>Component:</strong> <code>config/</code> layer.</p>
+                <p>
+                    <strong>How to Use:</strong> The primary deliverable is the
+                    deterministic mapping of privacy regulations to software
+                    configurations. You can interact with the current state of
+                    mappings by editing
+                    <code>config/privacy_indicators.json</code>.
+                </p>
+                <p>
+                    <strong>Expected Result:</strong> When executed through the
+                    loader, the system rigidly enforces GDPR/NIST structural
+                    integrity using Pydantic models. Any malformed mappings will
+                    crash the pipeline immediately, protecting the Bayesian
+                    Engine from processing invalid data.
+                </p>
+                <p>
+                    <strong>Commands:</strong> To verify the configuration logic
+                    holds true against the mappings:
+                </p>
+                <pre><code class="language-bash">pytest tests/test_pipeline.py -k &quot;test_config_validation&quot;
 </code></pre>
-<h3>Month 2: Metrics Definition &amp; Synthetic Data</h3>
-<p><strong>Component:</strong> <code>data/</code> layer.</p>
-<p><strong>How to Use:</strong>
-The goal is to provide the models with data to learn from. The downloaded OPP-115 alternative public mirror is cached as the definitive baseline truth.</p>
-<p><strong>Expected Result:</strong>
-Running the dataset download script caches the Parquet binary files into <code>data/raw/</code>. Data loading scripts will interface strictly with this local cache to avoid external HTTP dependencies during offline training.</p>
-<p><strong>Commands:</strong>
-To pull and persist the data locally:</p>
-<pre><code class="language-bash">python data/download.py
+                <h3>Month 2: Metrics Definition &amp; Synthetic Data</h3>
+                <p><strong>Component:</strong> <code>data/</code> layer.</p>
+                <p>
+                    <strong>How to Use:</strong> The goal is to provide the
+                    models with data to learn from. The downloaded OPP-115
+                    alternative public mirror is cached as the definitive
+                    baseline truth.
+                </p>
+                <p>
+                    <strong>Expected Result:</strong> Running the dataset
+                    download script caches the Parquet binary files into
+                    <code>data/raw/</code>. Data loading scripts will interface
+                    strictly with this local cache to avoid external HTTP
+                    dependencies during offline training.
+                </p>
+                <p>
+                    <strong>Commands:</strong> To pull and persist the data
+                    locally:
+                </p>
+                <pre><code class="language-bash">python data/download.py
 </code></pre>
-<h3>Month 3: AI Prototype Development</h3>
-<p><strong>Components:</strong> <code>models/</code> and <code>engine/</code> layers.</p>
-<p><strong>How to Use:</strong>
-This phase activates the core AI capabilities. You provide raw, unstructured privacy text to the <code>PrivacyFeatureExtractor</code> (transformer model). The logits generated by the model are passed to the <code>BayesianRiskEngine</code> as evidence nodes.</p>
-<p><strong>Expected Result:</strong>
-The transformer layer extracts latent features representing clauses (e.g., data minimization principles). The Bayesian Network takes those features, updates its Variable Elimination distributions, and returns a concrete, auditable probability scale representing overall standard non-compliance risk.</p>
-<p><strong>Commands:</strong>
-To run logic checks proving the topological mapping dynamically aligns the JSON config points to mathematically queryable DAG structures:</p>
-<pre><code class="language-bash">pytest tests/test_pipeline.py -k &quot;test_dynamic_topology_generation&quot;
+                <h3>Month 3: AI Prototype Development</h3>
+                <p>
+                    <strong>Components:</strong> <code>models/</code> and
+                    <code>engine/</code> layers.
+                </p>
+                <p>
+                    <strong>How to Use:</strong> This phase activates the core
+                    AI capabilities. You provide raw, unstructured privacy text
+                    to the <code>PrivacyFeatureExtractor</code> (transformer
+                    model). The logits generated by the model are passed to the
+                    <code>BayesianRiskEngine</code> as evidence nodes.
+                </p>
+                <p>
+                    <strong>Expected Result:</strong> The transformer layer
+                    extracts latent features representing clauses (e.g., data
+                    minimization principles). The Bayesian Network takes those
+                    features, updates its Variable Elimination distributions,
+                    and returns a concrete, auditable probability scale
+                    representing overall standard non-compliance risk.
+                </p>
+                <p>
+                    <strong>Commands:</strong> To run logic checks proving the
+                    topological mapping dynamically aligns the JSON config
+                    points to mathematically queryable DAG structures:
+                </p>
+                <pre><code class="language-bash">pytest tests/test_pipeline.py -k &quot;test_dynamic_topology_generation&quot;
 </code></pre>
-<h3>Month 4: Testing &amp; Final Validation</h3>
-<p><strong>Component:</strong> <code>tests/</code> and Benchmarking.</p>
-<p><strong>How to Use:</strong>
-Execution of the complete CI/CD test suite simulating adversarial compliance anomalies and ensuring probabilistic limits.</p>
-<p><strong>Expected Result:</strong>
-All unit tests should pass indicating that the risk indicators are mapped perfectly, uncertainty bounds are correctly mathematically restricted, and the HuggingFace trainers correctly compute tokenized arrays.</p>
-<p><strong>Commands:</strong>
-Run the complete testing suite ensuring no module caching conflicts:</p>
-<pre><code class="language-bash">pytest tests/test_pipeline.py -v -p no:cacheprovider
+                <h3>Month 4: Testing &amp; Final Validation</h3>
+                <p>
+                    <strong>Component:</strong> <code>tests/</code> and
+                    Benchmarking.
+                </p>
+                <p>
+                    <strong>How to Use:</strong> Execution of the complete CI/CD
+                    test suite simulating adversarial compliance anomalies and
+                    ensuring probabilistic limits.
+                </p>
+                <p>
+                    <strong>Expected Result:</strong> All unit tests should pass
+                    indicating that the risk indicators are mapped perfectly,
+                    uncertainty bounds are correctly mathematically restricted,
+                    and the HuggingFace trainers correctly compute tokenized
+                    arrays.
+                </p>
+                <p>
+                    <strong>Commands:</strong> Run the complete testing suite
+                    ensuring no module caching conflicts:
+                </p>
+                <pre><code class="language-bash">pytest tests/test_pipeline.py -v -p no:cacheprovider
 </code></pre>
+            </main>
+        </div>
+        <footer>
+            <p>Generated by MD to Deploy</p>
+        </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toggle = document.getElementById("sidebar-toggle");
+                const sidebar = document.getElementById("sidebar");
 
-        </main>
-    </div>
-    <footer>
-        <p>Generated by MD to Deploy</p>
-    </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggle = document.getElementById('sidebar-toggle');
-            const sidebar = document.getElementById('sidebar');
+                if (toggle && sidebar) {
+                    toggle.addEventListener("click", () => {
+                        sidebar.classList.toggle("active");
+                    });
 
-            if (toggle && sidebar) {
-                toggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('active');
-                });
-
-                // Optional: Close sidebar when clicking outside on mobile
-                document.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 768 && 
-                        sidebar.classList.contains('active') && 
-                        !sidebar.contains(e.target) && 
-                        !toggle.contains(e.target)) {
-                        sidebar.classList.remove('active');
-                    }
-                });
-            }
-        });
-    </script>
-</body>
+                    // Optional: Close sidebar when clicking outside on mobile
+                    document.addEventListener("click", (e) => {
+                        if (
+                            window.innerWidth <= 768 &&
+                            sidebar.classList.contains("active") &&
+                            !sidebar.contains(e.target) &&
+                            !toggle.contains(e.target)
+                        ) {
+                            sidebar.classList.remove("active");
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
 </html>

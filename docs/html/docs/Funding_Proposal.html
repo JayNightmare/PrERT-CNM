@@ -1,159 +1,236 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Funding_Proposal - Masters</title>
-    <link rel="stylesheet" href="..\..\css\styles.css"> 
-    <style>
-        :root {
-            --accent-color: #b366ff;
-            --accent-text-color: #000000;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <button id="sidebar-toggle" aria-label="Toggle Navigation">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-        <h1>Masters</h1>
-    </header>
-    <div class="container">
-        <nav id="sidebar">
-            
-            <ul>
-                <li><a href="..\..\index.html"><strong>Home</strong></a></li>
-                <li><a href="Architecture-Stack.html">Architecture-Stack</a></li>
-<li><a href="Funding_Proposal.html">Funding_Proposal</a></li>
-<li><a href="how_to_use.html">how_to_use</a></li>
-<li><a href="Model.html">Model</a></li>
-<li><a href="README.html">README</a></li>
-<li><a href="..\CHANGELOG.html">CHANGELOG</a></li>
-<li><a href="..\MEMORY.html">MEMORY</a></li>
-<li><a href="..\README.html">README</a></li>
-            </ul>
-        
-        </nav>
-        <main>
-            <h1><strong>Title:</strong></h1>
-<p><strong><em>“Strengthening User Privacy through AI-Driven Risk Quantification and
-International Standards Alignment</em></strong></p>
-<h2><strong>Aim:</strong></h2>
-<p>AI-based privacy quantification is an emerging but underdeveloped field. Existing
-works such as Polisis [2] and PrivacyBERT [3] automate privacy-policy analysis but
-remain disconnected from international standards and lack quantifiable indicators of
-user or system risk. Recent frameworks such as NIST’s AI Risk and Privacy Frameworks
-[4] highlight the growing demand for measurable, interoperable privacy-risk metrics.
-However, no current approach integrates AI-driven privacy analysis with standards-
-based compliance measurement [1]. This project fills that gap by developing AI
-methods to quantify user privacy risks in line with ISO/IEC, NIST, GDPR and related
-regulations. It will deliver validated privacy metrics, a proof-of-concept tool combining
-PrivacyBERT and Bayesian risk modelling, and a roadmap for scaling into a
-comprehensive, standards-aligned framework which laying the foundation for
-stronger privacy protection, accountability, and trust.</p>
-<h2><strong>Approach:</strong></h2>
-<p>The project will follow four delivery-focused steps. (1) Map measurable
-privacy principles from ISO/IEC, NIST, GDPR, IEEE and related regulations into
-quantifiable indicators by translating clauses such as consent, data minimisation,
-encryption, and third-party sharing into candidate metrics. (2) Design and test privacy-
-risk metrics at user, system, and organisational levels using synthetic logs and public
-breach datasets of ENISA [6] and PRC [7]. Organisation-level indicators (e.g.,
-compliance time, vendor safeguards, breach response) will be partially implemented,
-while digital ecosystem issues (e.g., cross-border transfers and interoperability) will
-be scoped conceptually for future work. (3) Develop an AI prototype combining
-transformer-based model PrivacyBERT which is fine-tuned on OPP-115 dataset [5] and
-Polisis datasets [2] for clause classification with Bayesian/probabilistic models for
-privacy-risk scoring. These datasets provide annotated privacy policies widely used for
-training and evaluating AI models in privacy clause classification and compliance
-analysis. (4) Validate and refine the prototype through benchmarking against defined
-metrics, producing a validated tool and deliver final report.</p>
-<h2><strong>Novelty and Expected Contribution:</strong></h2>
-<p>The project’s novelty lies in combining transformer-based policy analysis,
-probabilistic risk modelling, and international standards mapping into a single
-comprehensive quantitative framework. The earlier studies classify privacy clauses or
-analyse breaches in isolation, this project will create the first standards aligned,
-multi-level privacy risk quantification model which advances the state of the art in AI
-enabled privacy assurance.</p>
-<h1><strong>Timetable / Plan (4 Months)</strong></h1>
-<h2>Month Activities Deliverables</h2>
-<table>
-<thead>
-<tr>
-<th>Month</th>
-<th>Activities</th>
-<th>Deliverables</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>Map measurable privacy principles from ISO/IEC, NIST, GDPR, IEEE and international data protection regulations into privacy indicators.</td>
-<td>International standards to privacy metrics mapping</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Define and test user, system, and organisation-level privacy metrics, scope digital ecosystem level privacy indicators, and generate synthetic datasets.</td>
-<td>Draft privacy metrics along with synthetic data</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Build AI prototype using PrivacyBERT for privacy clause classification and Bayesian risk models for privacy risk scoring.</td>
-<td>Prototype user privacy quantification AI tool</td>
-</tr>
-<tr>
-<td>4</td>
-<td>Test prototype on real/synthetic data, benchmark metrics, and deliver final report</td>
-<td>Validated tool and final report</td>
-</tr>
-</tbody>
-</table>
-<p>References:</p>
-<ol>
-<li>Arshad R., Asghar R., “Characterisation and Quantification of User Privacy: Key
-Challenges, Regulations, and Future Directions”, IEEE Communications Surveys
-and Tutorials, 2024.</li>
-<li>Hamza Harkous, Kassem Fawaz, 2018. Polisis: automated analysis and
-presentation of privacy policies using deep learning. In Proceedings of the SEC'18.
-USENIX Association, USA, 531– 548</li>
-<li>Muralitharan, J., Arumugam, C. Privacy BERT-LSTM: a novel NLP algorithm for
-sensitive information detection in textual documents. <em>Neural Compute &amp;</em>
-<em>Applications</em> 36, 15439–15454, 2024.</li>
-<li>https://www.nist.gov/itl/ai-risk-management-framework</li>
-<li>https://www.usableprivacy.org/static/data/OPP-115_v1_0.zip</li>
-<li>https://www.enisa.europa.eu/publications/enisa-threat-landscape- 2020 - data-
-breach</li>
-<li>https://privacyrights.org/data-breaches</li>
-</ol>
-
-        </main>
-    </div>
-    <footer>
-        <p>Generated by MD to Deploy</p>
-    </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggle = document.getElementById('sidebar-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            if (toggle && sidebar) {
-                toggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('active');
-                });
-
-                // Optional: Close sidebar when clicking outside on mobile
-                document.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 768 && 
-                        sidebar.classList.contains('active') && 
-                        !sidebar.contains(e.target) && 
-                        !toggle.contains(e.target)) {
-                        sidebar.classList.remove('active');
-                    }
-                });
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Funding_Proposal - Masters</title>
+        <link rel="stylesheet" href="..\..\css\styles.css" />
+        <style>
+            :root {
+                --accent-color: #b366ff;
+                --accent-text-color: #000000;
             }
-        });
-    </script>
-</body>
+        </style>
+    </head>
+    <body>
+        <header>
+            <button id="sidebar-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <h1>Masters</h1>
+        </header>
+        <div class="container">
+            <nav id="sidebar">
+                <ul>
+                    <li>
+                        <a href="../index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="Sprint_1_Report.html">Sprint 1 Report</a>
+                    </li>
+                    <li>
+                        <a href="Architecture-Stack.html">Architecture-Stack</a>
+                    </li>
+                    <li>
+                        <a href="Funding_Proposal.html"
+                            ><strong>Funding_Proposal</strong></a
+                        >
+                    </li>
+                    <li><a href="how_to_use.html">how_to_use</a></li>
+                    <li>
+                        <a href="Model.html">Model</a>
+                    </li>
+                    <li><a href="README.html">README (Docs)</a></li>
+                    <li><a href="../html/CHANGELOG.html">CHANGELOG</a></li>
+                    <li><a href="../html/MEMORY.html">MEMORY</a></li>
+                    <li><a href="../html/README.html">README (Root)</a></li>
+                </ul>
+            </nav>
+            <main>
+                <h1><strong>Title:</strong></h1>
+                <p>
+                    <strong
+                        ><em
+                            >“Strengthening User Privacy through AI-Driven Risk
+                            Quantification and International Standards
+                            Alignment</em
+                        ></strong
+                    >
+                </p>
+                <h2><strong>Aim:</strong></h2>
+                <p>
+                    AI-based privacy quantification is an emerging but
+                    underdeveloped field. Existing works such as Polisis [2] and
+                    PrivacyBERT [3] automate privacy-policy analysis but remain
+                    disconnected from international standards and lack
+                    quantifiable indicators of user or system risk. Recent
+                    frameworks such as NIST’s AI Risk and Privacy Frameworks [4]
+                    highlight the growing demand for measurable, interoperable
+                    privacy-risk metrics. However, no current approach
+                    integrates AI-driven privacy analysis with standards- based
+                    compliance measurement [1]. This project fills that gap by
+                    developing AI methods to quantify user privacy risks in line
+                    with ISO/IEC, NIST, GDPR and related regulations. It will
+                    deliver validated privacy metrics, a proof-of-concept tool
+                    combining PrivacyBERT and Bayesian risk modelling, and a
+                    roadmap for scaling into a comprehensive, standards-aligned
+                    framework which laying the foundation for stronger privacy
+                    protection, accountability, and trust.
+                </p>
+                <h2><strong>Approach:</strong></h2>
+                <p>
+                    The project will follow four delivery-focused steps. (1) Map
+                    measurable privacy principles from ISO/IEC, NIST, GDPR, IEEE
+                    and related regulations into quantifiable indicators by
+                    translating clauses such as consent, data minimisation,
+                    encryption, and third-party sharing into candidate metrics.
+                    (2) Design and test privacy- risk metrics at user, system,
+                    and organisational levels using synthetic logs and public
+                    breach datasets of ENISA [6] and PRC [7]. Organisation-level
+                    indicators (e.g., compliance time, vendor safeguards, breach
+                    response) will be partially implemented, while digital
+                    ecosystem issues (e.g., cross-border transfers and
+                    interoperability) will be scoped conceptually for future
+                    work. (3) Develop an AI prototype combining
+                    transformer-based model PrivacyBERT which is fine-tuned on
+                    OPP-115 dataset [5] and Polisis datasets [2] for clause
+                    classification with Bayesian/probabilistic models for
+                    privacy-risk scoring. These datasets provide annotated
+                    privacy policies widely used for training and evaluating AI
+                    models in privacy clause classification and compliance
+                    analysis. (4) Validate and refine the prototype through
+                    benchmarking against defined metrics, producing a validated
+                    tool and deliver final report.
+                </p>
+                <h2><strong>Novelty and Expected Contribution:</strong></h2>
+                <p>
+                    The project’s novelty lies in combining transformer-based
+                    policy analysis, probabilistic risk modelling, and
+                    international standards mapping into a single comprehensive
+                    quantitative framework. The earlier studies classify privacy
+                    clauses or analyse breaches in isolation, this project will
+                    create the first standards aligned, multi-level privacy risk
+                    quantification model which advances the state of the art in
+                    AI enabled privacy assurance.
+                </p>
+                <h1><strong>Timetable / Plan (4 Months)</strong></h1>
+                <h2>Month Activities Deliverables</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Activities</th>
+                            <th>Deliverables</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                Map measurable privacy principles from ISO/IEC,
+                                NIST, GDPR, IEEE and international data
+                                protection regulations into privacy indicators.
+                            </td>
+                            <td>
+                                International standards to privacy metrics
+                                mapping
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                Define and test user, system, and
+                                organisation-level privacy metrics, scope
+                                digital ecosystem level privacy indicators, and
+                                generate synthetic datasets.
+                            </td>
+                            <td>
+                                Draft privacy metrics along with synthetic data
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>
+                                Build AI prototype using PrivacyBERT for privacy
+                                clause classification and Bayesian risk models
+                                for privacy risk scoring.
+                            </td>
+                            <td>
+                                Prototype user privacy quantification AI tool
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>
+                                Test prototype on real/synthetic data, benchmark
+                                metrics, and deliver final report
+                            </td>
+                            <td>Validated tool and final report</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>References:</p>
+                <ol>
+                    <li>
+                        Arshad R., Asghar R., “Characterisation and
+                        Quantification of User Privacy: Key Challenges,
+                        Regulations, and Future Directions”, IEEE Communications
+                        Surveys and Tutorials, 2024.
+                    </li>
+                    <li>
+                        Hamza Harkous, Kassem Fawaz, 2018. Polisis: automated
+                        analysis and presentation of privacy policies using deep
+                        learning. In Proceedings of the SEC'18. USENIX
+                        Association, USA, 531– 548
+                    </li>
+                    <li>
+                        Muralitharan, J., Arumugam, C. Privacy BERT-LSTM: a
+                        novel NLP algorithm for sensitive information detection
+                        in textual documents. <em>Neural Compute &amp;</em>
+                        <em>Applications</em> 36, 15439–15454, 2024.
+                    </li>
+                    <li>
+                        https://www.nist.gov/itl/ai-risk-management-framework
+                    </li>
+                    <li>
+                        https://www.usableprivacy.org/static/data/OPP-115_v1_0.zip
+                    </li>
+                    <li>
+                        https://www.enisa.europa.eu/publications/enisa-threat-landscape-
+                        2020 - data- breach
+                    </li>
+                    <li>https://privacyrights.org/data-breaches</li>
+                </ol>
+            </main>
+        </div>
+        <footer>
+            <p>Generated by MD to Deploy</p>
+        </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toggle = document.getElementById("sidebar-toggle");
+                const sidebar = document.getElementById("sidebar");
+
+                if (toggle && sidebar) {
+                    toggle.addEventListener("click", () => {
+                        sidebar.classList.toggle("active");
+                    });
+
+                    // Optional: Close sidebar when clicking outside on mobile
+                    document.addEventListener("click", (e) => {
+                        if (
+                            window.innerWidth <= 768 &&
+                            sidebar.classList.contains("active") &&
+                            !sidebar.contains(e.target) &&
+                            !toggle.contains(e.target)
+                        ) {
+                            sidebar.classList.remove("active");
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
 </html>
