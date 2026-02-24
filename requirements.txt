@@ -1,0 +1,13 @@
+# PrERT-CNM Core Dependencies
+# Focus: Transformer-based NLP, Probabilistic Risk Modeling (Bayesian), Data Processing
+
+transformers>=4.35.0
+torch>=2.1.0
+pgmpy>=0.1.24
+datasets>=2.14.6
+pandas>=2.1.1
+numpy>=1.26.0
+pydantic>=2.4.2
+pytest>=7.4.2
+protobuf>=4.24.0
+sentencepiece>=0.1.99

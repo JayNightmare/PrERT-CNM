@@ -1,0 +1,24 @@
+{
+	"_comment": "Purpose: Maps abstract international privacy standards into verifiable, quantifiable metrics (Week 1 Objective). We treat frameworks dynamically, permitting seamless injection of new indicators without code changes. Adherence to standards is modeled as a set of probabilistic constraints rather than rigid boolean checks.",
+	"frameworks": {
+		"GDPR": {
+			"Article_5_Data_Minimization": {
+				"indicators": [
+					"collection_necessity_score",
+					"retention_longevity_factor"
+				]
+			},
+			"Article_7_Consent": {
+				"indicators": [
+					"opt_in_clarity_index",
+					"withdrawal_friction_estimate"
+				]
+			}
+		},
+		"NIST_Privacy_Framework": {
+			"CT_DP_P": {
+				"indicators": ["transparent_processing_score"]
+			}
+		}
+	}
+}
