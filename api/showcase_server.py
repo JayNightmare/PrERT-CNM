@@ -82,26 +82,21 @@ async def analyze_policy(request: PolicyAnalysisRequest):
     text = request.text.lower()
     
     # 1. Perception Layer: REAL Transformer Extractions
-    # Running the actual text through our PrivacyBERT class:
-    outputs = extractor.extract_features(text)
-    
-    # Convert logits (raw dimensions) into a probability distribution [Safe, Risky]
-    probs = torch.nn.functional.softmax(outputs, dim=1).squeeze().tolist()
-    
-    # Extract the 'Risk' probability from standard BERT output structure
-    transformer_risk = probs[1] if len(probs) > 1 else sum(probs) / len(probs)
-    transformer_safe = 1.0 - transformer_risk
-
-    # Mapping the true transformer global risk + contextual lexical scanning 
-    # to trigger the fine-grained hierarchical attributes.
-    attrs = {
-        "collection_necessity_score": max(0.1, transformer_safe) if "collect" in text else 0.8,
-        "retention_longevity_factor": max(0.1, transformer_safe) if "retain" in text or "keep" in text else 0.9,
-        "opt_in_clarity_index": 0.9 if ("consent" in text or "agree" in text) and transformer_risk < 0.6 else 0.3,
-        "privacy_notice_readability": 0.8 if "understand" in text and transformer_risk < 0.6 else 0.4,
-        "withdrawal_friction_estimate": 0.2 if "withdraw" in text and transformer_risk > 0.5 else 0.7,
-        "encryption_at_rest": 0.9 if "encrypt" in text or "secure" in text else 0.1,
-    }
+    # We dynamically iterate all expected attributes, formatting a context prompt 
+    # for our PrivacyBERT model to yield a distinct extraction probability.
+    attrs = {}
+    for attr in all_attributes:
+        context_text = f"Analyze for privacy compliance ({attr.replace('_', ' ')}): {text}"
+        outputs = extractor.extract_features(context_text)
+        
+        # Convert logits (raw dimensions) into a probability distribution [Safe, Risky]
+        probs = torch.nn.functional.softmax(outputs, dim=1).squeeze().tolist()
+        
+        # Extract the 'Risk' probability from standard BERT output structure
+        transformer_risk = probs[1] if len(probs) > 1 else sum(probs) / sum(probs) if sum(probs) > 0 else 0.5
+        transformer_safe = 1.0 - transformer_risk
+        
+        attrs[attr] = transformer_safe
 
     # 2. Reasoning Layer: Propagate Risk Upwards
     category_risks = {}

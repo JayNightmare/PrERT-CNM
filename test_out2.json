@@ -1,0 +1,41 @@
+{
+    "attributes_triggered": {
+        "collection_necessity_score": 0.5,
+        "retention_longevity_factor": 0.5,
+        "opt_in_clarity_index": 0.51,
+        "privacy_notice_readability": 0.51,
+        "withdrawal_friction_estimate": 0.51,
+        "encryption_at_rest": 0.51
+    },
+    "category_risks": {
+        "Data_Minimization": 0.5,
+        "Transparency_and_Consent": 0.49,
+        "Security_and_Encryption": 0.49
+    },
+    "framework_risks": {
+        "NIST_Privacy_Framework": 0.5,
+        "IEEE_Privacy": 0.5,
+        "GDPR": 0.5,
+        "IEEE_7002": 0.49,
+        "ISO_27001": 0.5
+    },
+    "dag_edges": [
+        ["collection_necessity_score", "Data_Minimization"],
+        ["Data_Minimization", "GDPR_Risk"],
+        ["Data_Minimization", "NIST_Privacy_Framework_Risk"],
+        ["Data_Minimization", "ISO_27001_Risk"],
+        ["Data_Minimization", "IEEE_Privacy_Risk"],
+        ["retention_longevity_factor", "Data_Minimization"],
+        ["opt_in_clarity_index", "Transparency_and_Consent"],
+        ["Transparency_and_Consent", "GDPR_Risk"],
+        ["Transparency_and_Consent", "NIST_Privacy_Framework_Risk"],
+        ["Transparency_and_Consent", "IEEE_7002_Risk"],
+        ["Transparency_and_Consent", "ISO_27001_Risk"],
+        ["privacy_notice_readability", "Transparency_and_Consent"],
+        ["withdrawal_friction_estimate", "Transparency_and_Consent"],
+        ["encryption_at_rest", "Security_and_Encryption"],
+        ["Security_and_Encryption", "GDPR_Risk"],
+        ["Security_and_Encryption", "NIST_Privacy_Framework_Risk"],
+        ["Security_and_Encryption", "ISO_27001_Risk"]
+    ]
+}

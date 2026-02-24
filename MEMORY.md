@@ -45,6 +45,13 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 - [Completed] Scripted offline caching loader for the OPP-115 alternative mirror dataset (`data/download.py`).
 - [Completed] Refactored `privacy_indicators.json`, `loader.py`, and `bayesian_scorer.py` to enforce the Hierarchical Multi-Label Classification mapping (Categories -> Attributes -> Frameworks), pivoting away from the previously flat architecture.
 - [Completed] Explicitly extracted and mapped ISO/IEC 27001:2022 Annex A controls and IEEE 7002 clauses into the `privacy_indicators.json` and tightened corresponding topology tests.
+- [Completed] Refactored the interactive showcase API (`api/showcase_server.py`) to bypass mock data overrides and dynamically query the PyTorch `PrivacyFeatureExtractor` for authentic risk predictions.
+- **[Completed]** Scaffolded Agile Sprint Plan for Month 1 mapping international privacy standards to measurable indicators (`docs/Agile_Sprint_Plan_Month_1.md`).
+- **[Completed]** Scaffolded foundational `prert` core architecture module (`prert/`) with stateful Ingestion, DeBERTa Encoder, Attention Explainer, and a unified predictive Pipeline.
+- **[Completed]** Upgraded `prert/ingestion.py` to leverage `chromadb` for scalable Context Memory and `PyMuPDF` for authentic semantic PDF extraction, fulfilling Week 1 & 2 ingestion capabilities.
+- **[Completed]** Configured DeBERTa-v3 as the core sequence encoder and built out Attention Rollout logic for interpretability, fulfilling Week 3 mechanisms.
+- **[Completed]** Implemented a Custom Multi-Label Classification Head in the `PrERTPipeline` to generate explicit predictions over specific ISO standards with confidence scoring.
+- **[Completed]** Defined rigorous hierarchical ground truth data schemas (`data/schemas/iso_targets.json`) and implemented a dynamically parsed `Pydantic` `TargetValidator` (`config/target_validator.py`) to enforce target labels and specific class tensor weighting at runtime.
 
 ## Next Steps
 

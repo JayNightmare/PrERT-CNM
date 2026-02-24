@@ -1,0 +1,37 @@
+{
+    "Data_Retention": {
+        "Indefinite_Storage": {
+            "class_weight": 2.5,
+            "augmentation_required": true,
+            "frameworks": ["ISO_27001_A.8.10", "GDPR_Art_5.1.e"]
+        },
+        "No_Deletion_Mechanism": {
+            "class_weight": 1.8,
+            "augmentation_required": false,
+            "frameworks": ["GDPR_Art_17", "NIST_PF_CT.DM-P1"]
+        }
+    },
+    "Consent_and_Transparency": {
+        "Ambiguous_Opt_In": {
+            "class_weight": 3.0,
+            "augmentation_required": true,
+            "frameworks": ["GDPR_Art_7", "ISO_27701_7.2.3"]
+        },
+        "Hidden_Third_Party_Sharing": {
+            "class_weight": 2.2,
+            "augmentation_required": true,
+            "frameworks": ["GDPR_Art_13.1.e", "NIST_PF_CM.AW-P1"]
+        }
+    },
+    "Security_and_Encryption": {
+        "Missing_Encryption_At_Rest": {
+            "class_weight": 4.0,
+            "augmentation_required": true,
+            "frameworks": [
+                "ISO_27001_A.8.24",
+                "GDPR_Art_32.1.a",
+                "NIST_PF_PR.DS-P1"
+            ]
+        }
+    }
+}
