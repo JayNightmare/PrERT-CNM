@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Interactive Showcase - Masters</title>
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <link rel="stylesheet" href="../../css/showcase.css" />
+    </head>
+    <body>
+        <header>
+            <button id="sidebar-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <h1>Masters</h1>
+        </header>
+        <div class="container">
+            <nav id="sidebar">
+                <ul>
+                    <li><a href="../../index.html">Home</a></li>
+                    <li><a href="Sprint_1_Report.html">Sprint 1 Report</a></li>
+                    <li>
+                        <a href="Interactive_Showcase.html"
+                            ><strong>Interactive Showcase</strong></a
+                        >
+                    </li>
+                    <li>
+                        <a href="Architecture-Stack.html">Architecture Stack</a>
+                    </li>
+                    <li>
+                        <a href="Funding_Proposal.html">Funding Proposal</a>
+                    </li>
+                    <li><a href="how_to_use.html">How To Use</a></li>
+                    <li><a href="Model.html">Model</a></li>
+                    <li><a href="README.html">README (Docs)</a></li>
+                    <li><a href="../CHANGELOG.html">CHANGELOG</a></li>
+                    <li><a href="../MEMORY.html">MEMORY</a></li>
+                    <li><a href="../README.html">README (Root)</a></li>
+                </ul>
+            </nav>
+
+            <main>
+                <div align="center">
+                    <h1>Interactive Showcase</h1>
+                    <p>
+                        Test the dynamic Bayesian Risk Inference pipeline live.
+                    </p>
+                </div>
+
+                <div class="showcase-container">
+                    <div class="input-section">
+                        <div class="input-api">
+                            <label for="server-url">Backend API Server:</label>
+                            <input
+                                type="text"
+                                id="server-url"
+                                value="http://127.0.0.1:8000"
+                                class="input-api-text"
+                            />
+                        </div>
+                        <label for="policy-input"
+                            ><strong
+                                >Enter a synthetic Privacy Policy
+                                clause:</strong
+                            ></label
+                        >
+                        <textarea
+                            id="policy-input"
+                            placeholder="e.g., 'We collect your geolocation data endlessly without direct consent and keep it forever.'"
+                        ></textarea>
+                        <button class="analyze-btn" id="analyze-btn">
+                            Analyze Privacy Risks
+                        </button>
+                        <div id="status" class="status-msg"></div>
+                    </div>
+
+                    <div class="dashboard" id="dashboard">
+                        <div class="panel">
+                            <h3>1. Transformer Perceptual Layer</h3>
+                            <p class="panel-subtitle">
+                                Simulated Neural Extractions (Latent
+                                Probabilities)
+                            </p>
+                            <div id="attributes-container"></div>
+                        </div>
+
+                        <div class="panel">
+                            <h3>2. Hierarchical Category Risks</h3>
+                            <p class="panel-subtitle">
+                                Bayesian Aggregation of Attributes
+                            </p>
+                            <div id="categories-container"></div>
+                        </div>
+
+                        <div class="panel full-width">
+                            <h3>3. Framework Compliance Flags</h3>
+                            <p class="panel-subtitle">
+                                Universal Cross-Mapping Impact
+                            </p>
+                            <div
+                                id="frameworks-container"
+                                class="frameworks-grid"
+                            ></div>
+                        </div>
+
+                        <div class="panel full-width">
+                            <h3>4. Parsed DAG Topology</h3>
+                            <pre id="dag-container"></pre>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- API Hookup Script -->
+        <script>
+            document
+                .getElementById("analyze-btn")
+                .addEventListener("click", async () => {
+                    const text = document.getElementById("policy-input").value;
+                    const baseUrl = document
+                        .getElementById("server-url")
+                        .value.replace(/\/$/, "");
+                    const statusDiv = document.getElementById("status");
+                    const dashboard = document.getElementById("dashboard");
+
+                    if (!text.trim()) {
+                        statusDiv.textContent =
+                            "Please enter some text to analyze.";
+                        return;
+                    }
+
+                    statusDiv.textContent = `Calling Glassbox Backend at ${baseUrl}...`;
+
+                    try {
+                        const response = await fetch(`${baseUrl}/analyze`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ text: text }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(
+                                `Server returned ${response.status}`,
+                            );
+                        }
+
+                        const data = await response.json();
+                        statusDiv.textContent = "";
+
+                        renderMetrics(
+                            "attributes-container",
+                            data.attributes_triggered,
+                            true,
+                        );
+                        renderMetrics(
+                            "categories-container",
+                            data.category_risks,
+                            false,
+                        );
+                        renderMetrics(
+                            "frameworks-container",
+                            data.framework_risks,
+                            false,
+                        );
+
+                        document.getElementById("dag-container").textContent =
+                            JSON.stringify(data.dag_edges, null, 2);
+
+                        dashboard.classList.add("active");
+                    } catch (error) {
+                        statusDiv.textContent = `Error connecting to backend API: Make sure you ran 'uvicorn api.showcase_server:app --reload' locally.`;
+                        console.error(error);
+                    }
+                });
+
+            function renderMetrics(containerId, metricData, invertColors) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = ""; // Clear previous
+
+                for (const [key, value] of Object.entries(metricData)) {
+                    const percentage = (value * 100).toFixed(0);
+
+                    // Risk coloring logic
+                    let colorClass = "progress-bar-fill"; // Default green
+                    if (invertColors) {
+                        // For attributes, higher score = safer, lower score = risy
+                        if (value < 0.4) colorClass += " risk-high";
+                        else if (value < 0.7) colorClass += " risk-med";
+                    } else {
+                        // For risks, higher score = risky
+                        if (value > 0.6) colorClass += " risk-high";
+                        else if (value > 0.3) colorClass += " risk-med";
+                    }
+
+                    const row = `
+                    <div class="metric-row">
+                        <span class="metric-label">${key.replace(/_/g, " ")}</span>
+                        <span class="metric-percentage">${percentage}%</span>
+                        <div class="progress-bar-bg">
+                            <div class="${colorClass}" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+                    container.innerHTML += row;
+                }
+            }
+        </script>
+
+        <!-- Sidebar Toggle Script -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toggle = document.getElementById("sidebar-toggle");
+                const sidebar = document.getElementById("sidebar");
+
+                if (toggle && sidebar) {
+                    toggle.addEventListener("click", () => {
+                        sidebar.classList.toggle("active");
+                    });
+
+                    document.addEventListener("click", (e) => {
+                        if (
+                            window.innerWidth <= 768 &&
+                            sidebar.classList.contains("active") &&
+                            !sidebar.contains(e.target) &&
+                            !toggle.contains(e.target)
+                        ) {
+                            sidebar.classList.remove("active");
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
