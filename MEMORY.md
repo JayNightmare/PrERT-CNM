@@ -52,6 +52,9 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 - **[Completed]** Configured DeBERTa-v3 as the core sequence encoder and built out Attention Rollout logic for interpretability, fulfilling Week 3 mechanisms.
 - **[Completed]** Implemented a Custom Multi-Label Classification Head in the `PrERTPipeline` to generate explicit predictions over specific ISO standards with confidence scoring.
 - **[Completed]** Defined rigorous hierarchical ground truth data schemas (`data/schemas/iso_targets.json`) and implemented a dynamically parsed `Pydantic` `TargetValidator` (`config/target_validator.py`) to enforce target labels and specific class tensor weighting at runtime.
+- **[Completed]** Created `tests/generate_synthetic_policies.py` to auto-generate baseline test cases (Perfect, Mixed, Absolute Violation) for explicit unit testing boundary conditions without dataset noise.
+- **[Completed]** Refactored `PrERTPipeline` and `AttentionExplainer` to conform to a mathematically rigorous `{"token": str, "weight": float}` JSON structure, perfectly mirroring the model's true attention matrices directly to the frontend.
+- **[Completed]** Overhauled Interpretability Engine to utilize Gradient-Weighted Attention (via `logit.backward(retain_graph=True)`) over naive attention rollout. This maps tokens to specific predicted ISO classes and strictly penalizes DeBERTa structural 'sink' routing words.
 
 ## Next Steps
 

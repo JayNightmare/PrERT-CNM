@@ -19,6 +19,8 @@ class MultiLabelClassificationHead(nn.Module):
         
     def forward(self, features: torch.Tensor) -> torch.Tensor:
         x = features[:, 0, :]  # CLS token state
+        # Ensure input dtype aligns with layers to avoid Half/Float mismatch
+        x = x.to(self.dense.weight.dtype)
         x = self.dropout(x)
         x = self.dense(x)
         x = torch.relu(x)
@@ -45,42 +47,64 @@ class PrERTPipeline:
         self.classification_head = MultiLabelClassificationHead(
             hidden_size=self.encoder.model.config.hidden_size, 
             num_labels=self.num_labels
-        ).to(self.encoder.device)
+        ).to(self.encoder.device).to(self.encoder.model.dtype)
 
     def process_document(self, content: bytes | str, is_pdf: bool = False) -> dict:
+        import uuid
+        session_id = str(uuid.uuid4())
+        
         if is_pdf:
-            memory = self.ingestor.process_pdf(content)
+            memory = self.ingestor.process_pdf(content, session_id)
         else:
-            memory = self.ingestor.process_text(str(content))
+            memory = self.ingestor.process_text(str(content), session_id)
             
         audit_trail = []
         total_flags = 0
         
-        for segment_data in memory.retrieve_context():
+        for segment_data in memory.retrieve_context(session_id=session_id):
             text = segment_data["segment"]
             
-            # 1. Encode into context-aware representations
-            hidden_states, attentions, inputs = self.encoder.encode(text)
+            # 1. Encode into context-aware representations (Ensure grad is enabled for backward pass)
+            self.encoder.model.zero_grad()
+            self.classification_head.zero_grad()
+            hidden_states, attentions, inputs = self.encoder.encode(text, require_grad=True)
             
-            # 2. Extract specific salience via Attention Rollout
-            heatmap = self.explainer.generate_heatmap(attentions, inputs.input_ids, self.encoder.tokenizer)
+            # Hook the last layer's attention for gradient extraction
+            last_layer_attn = attentions[-1]
+            last_layer_attn.retain_grad()
             
             # 3. Process through Custom Multi-Label Head
-            with torch.no_grad():
-                probs = self.classification_head(hidden_states).squeeze(0)
+            probs = self.classification_head(hidden_states).squeeze(0)
             
             triggered_labels = [self.label_keys[i] for i, p in enumerate(probs) if p > 0.5]
             
             if triggered_labels:
                 total_flags += len(triggered_labels)
-                suspect_tokens = sorted(heatmap, key=lambda x: x["salience"], reverse=True)[:5]
+                
                 for label in triggered_labels:
+                    class_idx = self.label_keys.index(label)
+                    target_logit = probs[class_idx]
+                    
+                    # Generate class-specific heatmap via Gradient-Weighted Attention
+                    heatmap = self.explainer.generate_class_heatmap(
+                        target_logit, last_layer_attn, inputs.input_ids, self.encoder.tokenizer
+                    )
+                    
+                    # Embedded full top 10 token heatmap to audit trail based on "weight" extraction
+                    suspect_tokens = sorted(heatmap, key=lambda x: x["weight"], reverse=True)[:10]
+                    
+                    # Normalize weights to range [0.2 - 1.0] for visible UI heatmap rendering
+                    if suspect_tokens:
+                        max_weight = suspect_tokens[0]["weight"]
+                        for t in suspect_tokens:
+                            t["weight"] = min(1.0, max(0.2, t["weight"] / max_weight)) if max_weight > 0 else 0.2
+                            
                     audit_trail.append({
                         "chunk": segment_data.get("chunk_idx", 0),
                         "trigger_text": text[:200] + "...", 
                         "highlighted_tokens": suspect_tokens,
                         "violated_control": self.iso_mapping.get(label, "Unknown Control"),
-                        "confidence": float(probs[self.label_keys.index(label)])
+                        "confidence": float(probs[class_idx])
                     })
                 
         return {

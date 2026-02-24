@@ -14,11 +14,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class ContextMemoryBank:
-    def __init__(self, collection_name: str = os.getenv("CHROMADB_COLLECTION_NAME")):
+    def __init__(self, collection_name: str = None):
+        if collection_name is None:
+            collection_name = os.getenv("CHROMA_COLLECTION_NAME") or os.getenv("CHROMADB_COLLECTION_NAME")
+            if not collection_name:
+                raise ValueError("Missing ChromaDB collection name. Please set CHROMADB_COLLECTION_NAME in .env")
+            
+        api_key = os.getenv("CHROMA_API_KEY")
+        tenant = os.getenv("CHROMA_TENANT")
+        database = os.getenv("CHROMA_DATABASE")
+        
+        if not api_key or not tenant or not database:
+            raise ValueError(f"Missing ChromaDB credentials in .env. API_KEY: {bool(api_key)}, TENANT: {bool(tenant)}, DATABASE: {bool(database)}")
+            
         self.client = chromadb.CloudClient(
-            api_key=os.getenv("CHROMADB_API_KEY"),
-            tenant=os.getenv("CHROMADB_TENANT"),
-            database=os.getenv("CHROMADB_DATABASE")
+            api_key=api_key,
+            tenant=tenant,
+            database=database
         )
         self.collection = self.client.get_or_create_collection(name=collection_name)
 
@@ -31,8 +43,12 @@ class ContextMemoryBank:
             ids=[doc_id]
         )
 
-    def retrieve_context(self) -> list:
-        results = self.collection.get()
+    def retrieve_context(self, session_id: str = None) -> list:
+        if session_id:
+            results = self.collection.get(where={"session_id": session_id})
+        else:
+            results = self.collection.get()
+            
         context_list = []
         if results and results.get("documents"):
             for doc, meta, doc_id in zip(results["documents"], results["metadatas"], results["ids"]):
@@ -73,13 +89,13 @@ class DocumentIngestor:
                 
         return [c for c in refined_chunks if c]
 
-    def process_text(self, text: str) -> ContextMemoryBank:
+    def process_text(self, text: str, session_id: str) -> ContextMemoryBank:
         segments = self._semantic_chunking(text)
         for idx, seg in enumerate(segments):
-            self.memory_bank.store(seg, {"chunk_idx": idx, "source": "text"})
+            self.memory_bank.store(seg, {"chunk_idx": idx, "source": "text", "session_id": session_id})
         return self.memory_bank
 
-    def process_pdf(self, pdf_bytes: bytes) -> ContextMemoryBank:
+    def process_pdf(self, pdf_bytes: bytes, session_id: str) -> ContextMemoryBank:
         with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
             full_text = []
             for page_num in range(len(doc)):
@@ -89,6 +105,6 @@ class DocumentIngestor:
         combined_text = "\n".join(full_text)
         segments = self._semantic_chunking(combined_text)
         for idx, seg in enumerate(segments):
-            self.memory_bank.store(seg, {"chunk_idx": idx, "source": "pdf"})
+            self.memory_bank.store(seg, {"chunk_idx": idx, "source": "pdf", "session_id": session_id})
         
         return self.memory_bank

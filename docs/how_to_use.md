@@ -4,25 +4,61 @@ This document provides a comprehensive guide on utilizing the deliverables produ
 
 ## Deployment Strategy and Environment Setup
 
-The PrERT-CNM engine is designed as a modular Python package. To deploy the system locally or on a continuous integration server, follow these steps to bootstrap the environment.
+The PrERT-CNM engine is designed as a modular Python package and includes a FastAPI backend for the showcase application. Below are the steps to deploy the system both locally for development and on a production server.
 
-### 1. Initialize Virtual Environment
-It is highly recommended to isolate dependencies.
+### 1. Initialize Environment
+
+It is highly recommended to isolate dependencies using a virtual environment.
+
 ```bash
 python3 -m venv .venv
+# On macOS/Linux:
 source .venv/bin/activate
+# On Windows:
+.venv\Scripts\activate
 ```
 
 ### 2. Install Dependencies
-Install the required machine learning, probabilistic, and data processing libraries.
+
+Install the required machine learning, probabilistic, data processing, and web server libraries.
+
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Handle HuggingFace Caching
-By default, HuggingFace Hub attempts to cache heavy datasets and models in your global user directory. We recommend scoping this to the project directory to prevent system-wide permission errors.
+### 3. Configuration (.env)
+
+The ingestion layer relies on a Vector Database (ChromaDB) for Context Memory. Create a `.env` file in the root directory to configure the environment variables:
+
+```env
+CHROMADB_COLLECTION_NAME=prert_memory
+CHROMADB_API_KEY=your_api_key_here
+CHROMADB_TENANT=default_tenant
+CHROMADB_DATABASE=default_database
+```
+
+### 4. Running Locally (Development)
+
+To run the evaluation engine and showcase API locally with hot-reloading:
+
+```bash
+uvicorn api.showcase_server:app --reload --host localhost --port 8000
+```
+
+### 5. Server Deployment (Production)
+
+For production environments, it is recommended to run the server using `gunicorn` with `uvicorn` workers to handle concurrent requests robustly.
+
+Ensure HuggingFace caching is properly scoped to avoid system-wide permission errors:
+
 ```bash
 export HF_HOME="$(pwd)/.hf_cache"
+```
+
+Start the production server:
+
+```bash
+gunicorn api.showcase_server:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
 ---
@@ -30,6 +66,7 @@ export HF_HOME="$(pwd)/.hf_cache"
 ## Month-by-Month Usage Guide
 
 ### Month 1: Standards Mapping
+
 **Component:** `config/` layer.
 
 **How to Use:**
@@ -40,11 +77,13 @@ When executed through the loader, the system rigidly enforces GDPR/NIST structur
 
 **Commands:**
 To verify the configuration logic holds true against the mappings:
+
 ```bash
 pytest tests/test_pipeline.py -k "test_config_validation"
 ```
 
 ### Month 2: Metrics Definition & Synthetic Data
+
 **Component:** `data/` layer.
 
 **How to Use:**
@@ -55,11 +94,13 @@ Running the dataset download script caches the Parquet binary files into `data/r
 
 **Commands:**
 To pull and persist the data locally:
+
 ```bash
 python data/download.py
 ```
 
 ### Month 3: AI Prototype Development
+
 **Components:** `models/` and `engine/` layers.
 
 **How to Use:**
@@ -70,11 +111,13 @@ The transformer layer extracts latent features representing clauses (e.g., data 
 
 **Commands:**
 To run logic checks proving the topological mapping dynamically aligns the JSON config points to mathematically queryable DAG structures:
+
 ```bash
 pytest tests/test_pipeline.py -k "test_dynamic_topology_generation"
 ```
 
 ### Month 4: Testing & Final Validation
+
 **Component:** `tests/` and Benchmarking.
 
 **How to Use:**
@@ -85,6 +128,7 @@ All unit tests should pass indicating that the risk indicators are mapped perfec
 
 **Commands:**
 Run the complete testing suite ensuring no module caching conflicts:
+
 ```bash
 pytest tests/test_pipeline.py -v -p no:cacheprovider
 ```

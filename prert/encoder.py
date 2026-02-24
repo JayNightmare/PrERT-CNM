@@ -14,8 +14,8 @@ class PrERTEncoder:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
-    def encode(self, text: str):
+    def encode(self, text: str, require_grad: bool = False):
         inputs = self.tokenizer(text, return_tensors='pt', truncation=True, padding=True).to(self.device)
-        with torch.no_grad():
+        with torch.set_grad_enabled(require_grad):
             outputs = self.model(**inputs)
         return outputs.last_hidden_state, outputs.attentions, inputs

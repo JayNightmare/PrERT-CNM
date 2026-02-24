@@ -29,3 +29,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Upgraded `AttentionExplainer` to natively support Attention Rollout mechanisms, extracting layered token salience without relying on naive averaging.
 - Integrated a `MultiLabelClassificationHead` into `PrERTPipeline` to independently learn and apply ISO control flags over the DeBERTa hidden states.
 - Established a Pydantic-validated ground truth schema architecture (`config/target_validator.py` and `data/schemas/iso_targets.json`) supporting explicit hierarchy (Category -> Attribute) mapping coupled with regulatory framework tracing and embedded classification weights.
+- Auto-generated semantic synthetic policy benchmarking files (`tests/generate_synthetic_policies.py`) to map explicit edge-case failures without reliance on public dataset noise.
+- Renamed and structurally aligned `AttentionExplainer` and frontend pipeline payloads to uniformly utilize `weight` over `salience` ensuring deterministic API ingestion behavior.
+- **[Interpretability System Overhaul]**: Bypassed generic sequence Attention Rollout in favor of class-specific Gradient-Weighted Attention (`logit.backward()`). Features native stop-word routing penalization and mathematically isolates exactly which clause fragments triggered individual normative breaches (ISO/GDPR mappings).

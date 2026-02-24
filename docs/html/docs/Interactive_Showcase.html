@@ -70,6 +70,21 @@
                             id="policy-input"
                             placeholder="e.g., 'We collect your geolocation data endlessly without direct consent and keep it forever.'"
                         ></textarea>
+
+                        <div style="margin: 15px 0">
+                            <label for="policy-file"
+                                ><strong
+                                    >Or upload a full document (.txt or
+                                    .pdf):</strong
+                                ></label
+                            >
+                            <input
+                                type="file"
+                                id="policy-file"
+                                accept=".txt,.pdf"
+                                class="file-upload-input"
+                            />
+                        </div>
                         <button class="analyze-btn" id="analyze-btn">
                             Analyze Privacy Risks
                         </button>
@@ -77,37 +92,21 @@
                     </div>
 
                     <div class="dashboard" id="dashboard">
-                        <div class="panel">
-                            <h3>1. Transformer Perceptual Layer</h3>
+                        <div class="panel full-width">
+                            <h3>Compliance Evaluation Results</h3>
+                            <h4 id="status-container"></h4>
                             <p class="panel-subtitle">
-                                Simulated Neural Extractions (Latent
-                                Probabilities)
+                                Total Flags Detected:
+                                <span id="flags-container">0</span>
                             </p>
-                            <div id="attributes-container"></div>
-                        </div>
-
-                        <div class="panel">
-                            <h3>2. Hierarchical Category Risks</h3>
-                            <p class="panel-subtitle">
-                                Bayesian Aggregation of Attributes
-                            </p>
-                            <div id="categories-container"></div>
                         </div>
 
                         <div class="panel full-width">
-                            <h3>3. Framework Compliance Flags</h3>
+                            <h3>Audit Trail</h3>
                             <p class="panel-subtitle">
-                                Universal Cross-Mapping Impact
+                                Token-level Salience and Control Mappings
                             </p>
-                            <div
-                                id="frameworks-container"
-                                class="frameworks-grid"
-                            ></div>
-                        </div>
-
-                        <div class="panel full-width">
-                            <h3>4. Parsed DAG Topology</h3>
-                            <pre id="dag-container"></pre>
+                            <div id="audit-trail-container"></div>
                         </div>
                     </div>
                 </div>
@@ -120,26 +119,38 @@
                 .getElementById("analyze-btn")
                 .addEventListener("click", async () => {
                     const text = document.getElementById("policy-input").value;
+                    const fileInput = document.getElementById("policy-file");
+                    const file = fileInput.files[0];
                     const baseUrl = document
                         .getElementById("server-url")
                         .value.replace(/\/$/, "");
                     const statusDiv = document.getElementById("status");
                     const dashboard = document.getElementById("dashboard");
 
-                    if (!text.trim()) {
+                    if (!text.trim() && !file) {
                         statusDiv.textContent =
-                            "Please enter some text to analyze.";
+                            "Please enter text or upload a document to analyze.";
                         return;
                     }
 
-                    statusDiv.textContent = `Calling Glassbox Backend at ${baseUrl}...`;
+                    statusDiv.textContent = `Calling Glassbox Backend at ${baseUrl}... (This may take a moment for large documents)`;
 
                     try {
-                        const response = await fetch(`${baseUrl}/analyze`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ text: text }),
-                        });
+                        let response;
+                        if (file) {
+                            const formData = new FormData();
+                            formData.append("file", file);
+                            response = await fetch(`${baseUrl}/analyze/file`, {
+                                method: "POST",
+                                body: formData,
+                            });
+                        } else {
+                            response = await fetch(`${baseUrl}/analyze`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ text: text }),
+                            });
+                        }
 
                         if (!response.ok) {
                             throw new Error(
@@ -150,24 +161,43 @@
                         const data = await response.json();
                         statusDiv.textContent = "";
 
-                        renderMetrics(
-                            "attributes-container",
-                            data.attributes_triggered,
-                            true,
-                        );
-                        renderMetrics(
-                            "categories-container",
-                            data.category_risks,
-                            false,
-                        );
-                        renderMetrics(
-                            "frameworks-container",
-                            data.framework_risks,
-                            false,
-                        );
+                        // Inject overall status
+                        const statusEl =
+                            document.getElementById("status-container");
+                        statusEl.textContent = `Status: ${data.status}`;
+                        statusEl.style.color =
+                            data.total_flags > 0 ? "red" : "green";
 
-                        document.getElementById("dag-container").textContent =
-                            JSON.stringify(data.dag_edges, null, 2);
+                        document.getElementById("flags-container").textContent =
+                            data.total_flags;
+
+                        // Inject Audit Trail
+                        const auditContainer = document.getElementById(
+                            "audit-trail-container",
+                        );
+                        auditContainer.innerHTML = "";
+
+                        if (data.audit_trail && data.audit_trail.length > 0) {
+                            data.audit_trail.forEach((entry) => {
+                                let tokensHtml = entry.highlighted_tokens
+                                    .map(
+                                        (t) =>
+                                            `<span class="salience-token" style="background-color: rgba(255, 0, 0, ${t.weight.toFixed(2)});">${t.token}</span>`,
+                                    )
+                                    .join("");
+
+                                auditContainer.innerHTML += `
+                                    <div class="audit-entry">
+                                        <p class="audit-control"><strong>Violated Control:</strong> <span class="audit-control-name">${entry.violated_control}</span> (Confidence: ${(entry.confidence * 100).toFixed(1)}%)</p>
+                                        <p><strong>Trigger Text (Chunk ${entry.chunk}):</strong> <em>"${entry.trigger_text}"</em></p>
+                                        <p><strong>High Salience Tokens (Transformer Attention):</strong><br/> <div class="audit-chunk">${tokensHtml}</div></p>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            auditContainer.innerHTML =
+                                "<p>No compliance violations detected.</p>";
+                        }
 
                         dashboard.classList.add("active");
                     } catch (error) {
@@ -175,38 +205,6 @@
                         console.error(error);
                     }
                 });
-
-            function renderMetrics(containerId, metricData, invertColors) {
-                const container = document.getElementById(containerId);
-                container.innerHTML = ""; // Clear previous
-
-                for (const [key, value] of Object.entries(metricData)) {
-                    const percentage = (value * 100).toFixed(0);
-
-                    // Risk coloring logic
-                    let colorClass = "progress-bar-fill"; // Default green
-                    if (invertColors) {
-                        // For attributes, higher score = safer, lower score = risy
-                        if (value < 0.4) colorClass += " risk-high";
-                        else if (value < 0.7) colorClass += " risk-med";
-                    } else {
-                        // For risks, higher score = risky
-                        if (value > 0.6) colorClass += " risk-high";
-                        else if (value > 0.3) colorClass += " risk-med";
-                    }
-
-                    const row = `
-                    <div class="metric-row">
-                        <span class="metric-label">${key.replace(/_/g, " ")}</span>
-                        <span class="metric-percentage">${percentage}%</span>
-                        <div class="progress-bar-bg">
-                            <div class="${colorClass}" style="width: ${percentage}%"></div>
-                        </div>
-                    </div>
-                `;
-                    container.innerHTML += row;
-                }
-            }
         </script>
 
         <!-- Sidebar Toggle Script -->

@@ -1,15 +1,10 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 from pathlib import Path
-import random
 
-from config.loader import load_config
-from engine.bayesian_scorer import BayesianRiskEngine
-from pgmpy.factors.discrete import TabularCPD
-import torch
-from models.privacy_bert import PrivacyFeatureExtractor
+from prert.pipeline import PrERTPipeline
 
 app = FastAPI(title="PrERT-CNM Interactive Showcase API", version="1.0")
 
@@ -23,116 +18,83 @@ app.add_middleware(
 )
 
 # --- Initialize Global Pipeline State ---
-base_dir = Path(__file__).parent.parent
-config_path = base_dir / "config" / "privacy_indicators.json"
+import traceback
 
+pipeline = None
 try:
-    config = load_config(config_path)
-    engine = BayesianRiskEngine()
-    engine.build_topology_from_config(config)
-    
-    print("Loading PyTorch Transformer Model... (PrivacyBERT)")
-    extractor = PrivacyFeatureExtractor()
-    print("Transformer loaded successfully.")
-    
-    # Generate mock Bayesian CPDs for the demonstration graph
-    # In a real environment, these probabilities would be learned via maximum likelihood
-    # from empirical datasets (e.g., OPP-115).
-    # For this showcase, we explicitly set logical priors.
-    cpds = []
-    
-    # Attributes (Priors derived from mock "Neural Extraction" certainty)
-    all_attributes = []
-    for cat in config.categories.values():
-        for attr in cat.attributes.keys():
-            all_attributes.append(attr)
-            
-    frameworks = set()
-    for cat_name, cat_data in config.categories.items():
-        for attr_name, attr_config in cat_data.attributes.items():
-            for f in attr_config.frameworks:
-                frameworks.add(f.split(":")[0])
-                
-    # We'll use a simplified mock engine for the interactive showcase. 
-    # Exact tabular CPD creation over large dynamic topologies requires exhaustive state permutations 
-    # (e.g., 2 parents = 4 parameter columns). 
-    # To keep the showcase lightweight and strictly focused on demonstrating the DAG propagation 
-    # geometry (Attributes -> Categories -> Frameworks), we'll mock the risk scoring calculation mathematically 
-    # outside of pgmpy for the *showcase endpoint*, while proudly displaying the structural DAG we mapped.
-
+    print("Initializing the PrERT-CNM Core Pipeline (DeBERTa-v3 + ChromaDB)")
+    pipeline = PrERTPipeline()
 except Exception as e:
     print(f"Error initializing backend: {e}")
+    traceback.print_exc()
 
 class PolicyAnalysisRequest(BaseModel):
     text: str
 
+class TokenHighlight(BaseModel):
+    token: str
+    weight: float
+
+class AuditTrailEntry(BaseModel):
+    chunk: int
+    trigger_text: str
+    highlighted_tokens: list[TokenHighlight]
+    violated_control: str
+    confidence: float
+
 class AnalysisResult(BaseModel):
-    attributes_triggered: dict[str, float]
-    category_risks: dict[str, float]
-    framework_risks: dict[str, float]
-    dag_edges: list[tuple[str, str]]
+    status: str
+    total_flags: int
+    audit_trail: list[AuditTrailEntry]
 
 @app.post("/analyze", response_model=AnalysisResult)
 async def analyze_policy(request: PolicyAnalysisRequest):
     """
-    Mock endpoint simulating the full PrERT-CNM pipeline.
-    1. Simulates Transformer text extraction (Attribute Triggers).
-    2. Simulates Bayesian Risk Propagation (Hierarchical Risk).
+    Real endpoint invoking the PrERT-CNM inference pipeline.
+    It passes the document through Semantic Context Chunking, DeBERTa Encoding,
+    Attention Rollout, and finally Custom Multi-Label Classification.
     """
-    text = request.text.lower()
-    
-    # 1. Perception Layer: REAL Transformer Extractions
-    # We dynamically iterate all expected attributes, formatting a context prompt 
-    # for our PrivacyBERT model to yield a distinct extraction probability.
-    attrs = {}
-    for attr in all_attributes:
-        context_text = f"Analyze for privacy compliance ({attr.replace('_', ' ')}): {text}"
-        outputs = extractor.extract_features(context_text)
+    try:
+        if pipeline is None:
+            raise HTTPException(status_code=500, detail="PrERT Pipeline failed to initialize locally. Check server logs (e.g. invalid ChromaDB credentials).")
+        # Pass document to the stateful pipeline
+        result = pipeline.process_document(request.text, is_pdf=False)
+        return AnalysisResult(**result)
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Pipeline inference error: {str(e)}")
+
+@app.post("/analyze/file", response_model=AnalysisResult)
+async def analyze_file(file: UploadFile = File(...)):
+    """
+    Endpoint for uploading raw documents (.txt or .pdf).
+    """
+    try:
+        if pipeline is None:
+            raise HTTPException(status_code=500, detail="PrERT Pipeline failed to initialize locally.")
+            
+        content = await file.read()
+        is_pdf = file.filename.lower().endswith(".pdf")
         
-        # Convert logits (raw dimensions) into a probability distribution [Safe, Risky]
-        probs = torch.nn.functional.softmax(outputs, dim=1).squeeze().tolist()
-        
-        # Extract the 'Risk' probability from standard BERT output structure
-        transformer_risk = probs[1] if len(probs) > 1 else sum(probs) / sum(probs) if sum(probs) > 0 else 0.5
-        transformer_safe = 1.0 - transformer_risk
-        
-        attrs[attr] = transformer_safe
-
-    # 2. Reasoning Layer: Propagate Risk Upwards
-    category_risks = {}
-    for cat_name, cat_data in config.categories.items():
-        # A category's risk is the inverted average of its attribute "health" scores
-        # We simulate Bayesian propagation where 1 failing attribute spikes the category risk.
-        cat_attr_scores = [attrs[a] for a in cat_data.attributes.keys()]
-        if cat_attr_scores:
-            # High attribute score = healthy. Low attribute score = risky.
-            risk = 1.0 - (sum(cat_attr_scores) / len(cat_attr_scores))
-            category_risks[cat_name] = round(risk, 2)
-
-    # 3. Framework Mapping
-    framework_risks = {fw: 0.0 for fw in frameworks}
-    for cat_name, cat_data in config.categories.items():
-        for attr_name, attr_config in cat_data.attributes.items():
-             for fw_clause in attr_config.frameworks:
-                 fw_name = fw_clause.split(":")[0]
-                 # The framework takes the worst-case risk from its linked attributes/categories
-                 attr_risk = 1.0 - attrs[attr_name]
-                 if attr_risk > framework_risks[fw_name]:
-                     framework_risks[fw_name] = round(attr_risk, 2)
-
-    # Clean up attributes to probabilities for display
-    attrs = {k: round(v, 2) for k, v in attrs.items()}
-
-    return AnalysisResult(
-        attributes_triggered=attrs,
-        category_risks=category_risks,
-        framework_risks=framework_risks,
-        dag_edges=list(engine.network.edges())
-    )
+        if not is_pdf:
+            try:
+                content = content.decode("utf-8")
+            except UnicodeDecodeError:
+                raise HTTPException(status_code=400, detail="Text files must be UTF-8 encoded.")
+                
+        result = pipeline.process_document(content, is_pdf=is_pdf)
+        return AnalysisResult(**result)
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Pipeline inference error: {str(e)}")
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "categories_loaded": len(config.categories.keys())}
+    return {"status": "ok", "pipeline": "initialized" if 'pipeline' in globals() else "error"}
 
 if __name__ == "__main__":
     import uvicorn

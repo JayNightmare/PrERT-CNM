@@ -161,3 +161,36 @@ pre {
     margin-top: 10px;
     font-style: italic;
 }
+
+.file-upload-input {
+    display: block;
+    margin-top: 5px;
+    color: white;
+}
+
+.audit-entry {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background-color: #222;
+}
+
+.audit-control {
+    margin-top: 0;
+}
+
+.audit-control-name {
+    color: #ffaa00;
+}
+
+.audit-chunk {
+    margin-top: 5px;
+}
+
+.salience-token {
+    padding: 2px;
+    border-radius: 3px;
+    font-weight: bold;
+    margin-right: 4px;
+}
