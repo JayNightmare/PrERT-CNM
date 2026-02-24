@@ -14,3 +14,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Extended `PrivacyFeatureExtractor` to include Hugging Face `Trainer` loops (`models/privacy_bert.py`).
 - Initialized Bayesian Network graph topologies with discrete CPD structures (`engine/bayesian_scorer.py`).
 - Deployed end-to-end geometry and scaling bounds unit tests under `pytest`.
+- Activated dynamic topology mappings correlating Pydantic JSON logic to explicit `pgmpy` mathematical DAG structures (`engine/bayesian_scorer.py`).
+- Cached and persisted the alternative public `OPP-115` policy corpus offline onto the disk (`data/download.py`).

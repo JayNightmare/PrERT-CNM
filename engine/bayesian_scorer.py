@@ -27,6 +27,22 @@ class BayesianRiskEngine:
     def build_topology(self, dependencies: list[tuple[str, str]]):
         """Constructs the DAG from mapped legal standards."""
         self.network.add_edges_from(dependencies)
+
+    def build_topology_from_config(self, config):
+        """
+        Dynamically generates DAG edges based on the parsed Pydantic settings.
+        Maps each indicator (child) to its overarching principle (parent).
+        """
+        edges = []
+        for framework_name, framework_data in config.frameworks.items():
+            for principle_name, indicator_config in framework_data.get_principles().items():
+                for indicator in indicator_config.indicators:
+                    edges.append((indicator, principle_name))
+                
+                # Link all principles back to a single composite risk node for the framework
+                edges.append((principle_name, f"{framework_name}_Risk"))
+
+        self.build_topology(edges)
         
     def add_cpds(self, cpds: list[TabularCPD]):
         """Injects Conditional Probability Distributions into nodes."""

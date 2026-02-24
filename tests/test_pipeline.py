@@ -60,6 +60,24 @@ class TestSyntheticRiskPipeline:
         assert res["states"] == [0, 1]
         assert len(res["risk_distribution"]) == 2
 
+    def test_dynamic_topology_generation(self):
+        # Validate that JSON configs correctly translate to DAG edges
+        import os
+        from pathlib import Path
+        from engine.bayesian_scorer import BayesianRiskEngine
+
+        base_dir = Path(__file__).parent.parent
+        config_path = base_dir / "config" / "privacy_indicators.json"
+        config = load_config(config_path)
+
+        engine = BayesianRiskEngine()
+        engine.build_topology_from_config(config)
+
+        # Expected edge mapped from privacy_indicators.json
+        # collection_necessity_score -> Article_5_Data_Minimization -> GDPR_Risk
+        assert engine.network.has_edge("collection_necessity_score", "Article_5_Data_Minimization")
+        assert engine.network.has_edge("Article_5_Data_Minimization", "GDPR_Risk")
+
     def test_privacy_bert_feature_extraction(self):
         # We verify that the model returns expected tensor geometries.
         # This isolates failures between the perception layer and reasoning layer.

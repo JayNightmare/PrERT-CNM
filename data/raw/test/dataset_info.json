@@ -1,0 +1,65 @@
+{
+  "builder_name": "parquet",
+  "citation": "",
+  "config_name": "default",
+  "dataset_name": "opp_115",
+  "dataset_size": 1635092,
+  "description": "",
+  "download_checksums": {
+    "hf://datasets/alzoubi36/opp_115@840c8c7266407934afe913e2ded10085c3e6f2fa/data/train-00000-of-00001-58a17c1d9a42fb16.parquet": {
+      "num_bytes": 512987,
+      "checksum": null
+    },
+    "hf://datasets/alzoubi36/opp_115@840c8c7266407934afe913e2ded10085c3e6f2fa/data/validation-00000-of-00001-a2d185c061e21e4a.parquet": {
+      "num_bytes": 137245,
+      "checksum": null
+    },
+    "hf://datasets/alzoubi36/opp_115@840c8c7266407934afe913e2ded10085c3e6f2fa/data/test-00000-of-00001-e939d436d2b73202.parquet": {
+      "num_bytes": 161368,
+      "checksum": null
+    }
+  },
+  "download_size": 811600,
+  "features": {
+    "text": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "label": {
+      "feature": {
+        "dtype": "int64",
+        "_type": "Value"
+      },
+      "_type": "List"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 2446692,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 1047445,
+      "num_examples": 2185,
+      "dataset_name": "opp_115"
+    },
+    "validation": {
+      "name": "validation",
+      "num_bytes": 270908,
+      "num_examples": 550,
+      "dataset_name": "opp_115"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 316739,
+      "num_examples": 697,
+      "dataset_name": "opp_115"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
