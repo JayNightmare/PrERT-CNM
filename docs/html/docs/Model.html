@@ -1,318 +1,432 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model - Masters</title>
-    <link rel="stylesheet" href="..\..\css\styles.css"> 
-    <style>
-        :root {
-            --accent-color: #b366ff;
-            --accent-text-color: #000000;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <button id="sidebar-toggle" aria-label="Toggle Navigation">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-        <h1>Masters</h1>
-    </header>
-    <div class="container">
-        <nav id="sidebar">
-            
-            <ul>
-                <li><a href="..\..\index.html"><strong>Home</strong></a></li>
-                <li><a href="Architecture-Stack.html">Architecture-Stack</a></li>
-<li><a href="Funding_Proposal.html">Funding_Proposal</a></li>
-<li><a href="how_to_use.html">how_to_use</a></li>
-<li><a href="Model.html">Model</a></li>
-<li><a href="README.html">README</a></li>
-<li><a href="..\CHANGELOG.html">CHANGELOG</a></li>
-<li><a href="..\MEMORY.html">MEMORY</a></li>
-<li><a href="..\README.html">README</a></li>
-            </ul>
-        
-        </nav>
-        <main>
-            <p>&lt;p align=&quot;center&quot;&gt;
-&lt;a href=&quot;./Architecture-Stack.md&quot;&gt;Architecture Stack&lt;/a&gt;
-     |     
-&lt;a href=&quot;./README.md&quot;&gt;README&lt;/a&gt;
-     |     
-&lt;a href=&quot;./Model.md&quot;&gt;Model Research&lt;/a&gt;
-&lt;/p&gt;</p>
-<p>&lt;div align=center&gt;</p>
-<h1>Model Research</h1>
-<p>Research into the different models that came before and which areas to keep and what could be improved. Privacy BERT-LSTM and Polsis were good models, however their lack of tokenization caused a bottleneck in the amount of data the model could process and keep track of. The addition of the LSTM transformer allowed for short-term memory to be kept for a longer period of time, but the word embedding was not made for longer pieces of text.</p>
-<p>This new model purposed is called Prert-CNM (<strong>Pr</strong>-ivacy B-<strong>ERT</strong> <strong>C</strong>ontextual <strong>N</strong>eural <strong>M</strong>emory) increases the number of specialised parameters (increased embedding layer) and tokens (100 Input w/ 512 limit to 4096), swaps the general purpose BERT-LSTM model with the specialised mode DeBERTa v3 (with help from several other models working as helper agents) to process larger docs and hold onto more memory.</p>
-<p>&lt;/div&gt;</p>
-<p><strong>Chapters</strong></p>
-<ul>
-<li><a href="#prert-cnm">Prert-CNM</a></li>
-<li><a href="#lstm-layer">LSTM Layer</a></li>
-<li><a href="#dataset">Dataset</a></li>
-<li><a href="#iso-controls">ISO Controls</a></li>
-<li><a href="#model-architecture">Model Architecture</a></li>
-<li><a href="#output">Output</a></li>
-</ul>
-<hr>
-<h1>Prert-CNM</h1>
-<p><strong>Table of Contents</strong></p>
-<ul>
-<li><a href="#memory">Memory</a>
-<ul>
-<li><a href="#context">Context</a></li>
-<li><a href="#weightings">Weightings</a></li>
-<li><a href="#cluster-control">Cluster Control</a></li>
-</ul>
-</li>
-<li><a href="#lstm-layer">Transformer Swaps</a></li>
-<li><a href="#lstm-layer">Fine-tuning LLMs</a></li>
-<li><a href="#dataset">Synthetic Dataset Generation</a></li>
-<li><a href="#iso-controls">Non-Compliance Handling</a></li>
-<li><a href="#iso-controls">Policy Weighting</a></li>
-<li><a href="#hierarchical-transformer-uses">Hierarchical Transformer</a></li>
-<li><a href="#output">Multi-label Mapping</a></li>
-<li><a href="#returns-back">Return Attributes</a></li>
-</ul>
-<h2>Memory</h2>
-<h3>Context</h3>
-<ul>
-<li>Split into 3 areas
-<ul>
-<li>Broad Context
-<ul>
-<li>Flag a broad policy</li>
-<li>DOES NOT apply label</li>
-</ul>
-</li>
-<li>Specialized Context
-<ul>
-<li>Checks flags using CNM</li>
-<li>DOES apply label</li>
-</ul>
-</li>
-<li>Fine-Grain Context
-<ul>
-<li>Checks label against specific control</li>
-<li>Flags if policy is broken
-<ul>
-<li>Will not apply anything if data is ok</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Trained on the Language of Privacy
-<ul>
-<li>Specialized Vococab</li>
-<li>Train on 130k&gt; Policies</li>
-<li>Word Embeddings
-<ul>
-<li>Subword Embeddings</li>
-<li>FastText</li>
-<li>BERT's WordPiece</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Applying a Contextual Neural Memory (CNM)
-<ul>
-<li>Agent Framework
-<ul>
-<li>Focus
-<ul>
-<li>Data Layer <em>(Extraction)</em>
-<ul>
-<li>Segments Text into chunks</li>
-</ul>
-</li>
-<li>Application Layer <em>(Interface)</em>
-<ul>
-<li>Can ask questions about the policy</li>
-</ul>
-</li>
-<li>ML Layer <em>(Analysis)</em>
-<ul>
-<li>AI Annotation of the text</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Design
-<ul>
-<li>NIST AI Risk Management Framework <em>(AI RMF)</em></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3>Weightings</h3>
-<ul>
-<li>Class Weighting</li>
-<li>Advanced Data Augmentation</li>
-<li>Attention Mechanism
-<ul>
-<li>Attention Weights</li>
-<li>Heatmap</li>
-<li>Real-time Highlighting on exact words</li>
-<li>Tokens that trigger an ISO compliance failure</li>
-<li>Audit Trail</li>
-</ul>
-</li>
-</ul>
-<h3>Cluster Control</h3>
-<ul>
-<li>Vector Database
-<ul>
-<li>https://www.pinecone.io/</li>
-<li>a specialized storage system designed to manage, index, and search high-dimensional vector embeddings</li>
-</ul>
-</li>
-<li>Have an AI manage the cluster
-<ul>
-<li>Tasked to ensure data is processed correctly</li>
-<li>Local model that lives on the server</li>
-</ul>
-</li>
-</ul>
-<h2>LSTM Layer</h2>
-<ul>
-<li>Swap LSTM with a pure transformer
-<ul>
-<li>RoBERTa
-<ul>
-<li>Superior Language Understanding <em>(Using Meta's Data)</em></li>
-<li>Dynamic Masking Algo</li>
-<li>Variants of model
-<ul>
-<li>12 layer w/ 125 million parameters</li>
-<li>24 layers w/ 355 million. parameters</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>DeBERTa
-<ul>
-<li>Improvement of RoBERTa and BERT <em>(Disentangled attention)</em></li>
-<li>Separates word content from its position <em>(processes)</em></li>
-<li>Replaces softmax decoder with a mask decoder</li>
-</ul>
-</li>
-<li>Fine-tuned LLM with Specialized Training/Testing</li>
-</ul>
-</li>
-<li>BERT-LSTM is a hybrid <em>(Note)</em></li>
-</ul>
-<h2>Dataset</h2>
-<ul>
-<li>Mix Datasets</li>
-<li>Synthetic Dataset
-<ul>
-<li>Mix of SMS and company data</li>
-<li>Based on Real-World</li>
-</ul>
-</li>
-</ul>
-<h2>ISO Controls</h2>
-<ul>
-<li>ISO Non-Compliance
-<ul>
-<li>Employ Synthetic Data Generation <em>(Linked to Synthetic Dataset)</em></li>
-<li>&quot;Rare Event&quot;</li>
-</ul>
-</li>
-<li>Apply Weight to policies</li>
-</ul>
-<h2>Model Architecture</h2>
-<h3>Hierarchical Transformer <em>(Uses)</em></h3>
-<ul>
-<li>LLM <em>(Operates Through)</em>
-<ul>
-<li>Glass-Box</li>
-</ul>
-</li>
-<li>Top Level
-<ul>
-<li>Category Layer</li>
-<li>High-level ISO domain
-<ul>
-<li>Access Control
-<ul>
-<li>Linked to CNM</li>
-</ul>
-</li>
-<li>Data Retention
-<ul>
-<li>Linked to CNM</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>Bottom Level
-<ul>
-<li>Attribute Layer</li>
-<li>Secondary Classifier</li>
-<li>Fine-grained requirements
-<ul>
-<li>Password Length</li>
-<li>Encryption Standards</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2>Output</h2>
-<ul>
-<li>Multi-label</li>
-<li>Hierarchical Attributes
-<ul>
-<li>Mapped to ISO controls</li>
-</ul>
-</li>
-</ul>
-<h3>Returns back</h3>
-<ul>
-<li>Number of flags</li>
-<li>What data triggered a flag</li>
-<li>Which control was broken</li>
-</ul>
-
-        </main>
-    </div>
-    <footer>
-        <p>Generated by MD to Deploy</p>
-    </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggle = document.getElementById('sidebar-toggle');
-            const sidebar = document.getElementById('sidebar');
-
-            if (toggle && sidebar) {
-                toggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('active');
-                });
-
-                // Optional: Close sidebar when clicking outside on mobile
-                document.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 768 && 
-                        sidebar.classList.contains('active') && 
-                        !sidebar.contains(e.target) && 
-                        !toggle.contains(e.target)) {
-                        sidebar.classList.remove('active');
-                    }
-                });
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Model - Masters</title>
+        <link rel="stylesheet" href="..\..\css\styles.css" />
+        <style>
+            :root {
+                --accent-color: #b366ff;
+                --accent-text-color: #000000;
             }
-        });
-    </script>
-</body>
+        </style>
+    </head>
+    <body>
+        <header>
+            <button id="sidebar-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <h1>Masters</h1>
+        </header>
+        <div class="container">
+            <nav id="sidebar">
+                <ul>
+                    <li>
+                        <a href="..\..\index.html"><strong>Home</strong></a>
+                    </li>
+                    <li>
+                        <a href="Architecture-Stack.html">Architecture-Stack</a>
+                    </li>
+                    <li>
+                        <a href="Funding_Proposal.html">Funding_Proposal</a>
+                    </li>
+                    <li><a href="how_to_use.html">how_to_use</a></li>
+                    <li><a href="Model.html">Model</a></li>
+                    <li><a href="README.html">README</a></li>
+                    <li><a href="..\CHANGELOG.html">CHANGELOG</a></li>
+                    <li><a href="..\MEMORY.html">MEMORY</a></li>
+                    <li><a href="..\README.html">README</a></li>
+                </ul>
+            </nav>
+            <main>
+                <p>
+                    &lt;p align=&quot;center&quot;&gt; &lt;a
+                    href=&quot;./Architecture-Stack.md&quot;&gt;Architecture
+                    Stack&lt;/a&gt;      |      &lt;a
+                    href=&quot;./README.md&quot;&gt;README&lt;/a&gt;      |     
+                    &lt;a href=&quot;./Model.md&quot;&gt;Model
+                    Research&lt;/a&gt; &lt;/p&gt;
+                </p>
+                <p>&lt;div align=center&gt;</p>
+                <h1>Model Research</h1>
+                <p>
+                    Research into the different models that came before and
+                    which areas to keep and what could be improved. Privacy
+                    BERT-LSTM and Polsis were good models, however their lack of
+                    tokenization caused a bottleneck in the amount of data the
+                    model could process and keep track of. The addition of the
+                    LSTM transformer allowed for short-term memory to be kept
+                    for a longer period of time, but the word embedding was not
+                    made for longer pieces of text.
+                </p>
+                <p>
+                    This new model purposed is called Prert-CNM
+                    (<strong>Pr</strong>-ivacy B-<strong>ERT</strong>
+                    <strong>C</strong>ontextual <strong>N</strong>eural
+                    <strong>M</strong>emory) increases the number of specialised
+                    parameters (increased embedding layer) and tokens (100 Input
+                    w/ 512 limit to 4096), swaps the general purpose BERT-LSTM
+                    model with the specialised mode DeBERTa v3 (with help from
+                    several other models working as helper agents) to process
+                    larger docs and hold onto more memory.
+                </p>
+                <p>&lt;/div&gt;</p>
+                <p><strong>Chapters</strong></p>
+                <ul>
+                    <li><a href="#prert-cnm">Prert-CNM</a></li>
+                    <li><a href="#lstm-layer">LSTM Layer</a></li>
+                    <li><a href="#dataset">Dataset</a></li>
+                    <li><a href="#iso-controls">ISO Controls</a></li>
+                    <li>
+                        <a href="#model-architecture">Model Architecture</a>
+                    </li>
+                    <li><a href="#output">Output</a></li>
+                </ul>
+                <hr />
+                <h1>Prert-CNM</h1>
+                <p><strong>Table of Contents</strong></p>
+                <ul>
+                    <li>
+                        <a href="#memory">Memory</a>
+                        <ul>
+                            <li><a href="#context">Context</a></li>
+                            <li><a href="#weightings">Weightings</a></li>
+                            <li>
+                                <a href="#cluster-control">Cluster Control</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#lstm-layer">Transformer Swaps</a></li>
+                    <li><a href="#lstm-layer">Fine-tuning LLMs</a></li>
+                    <li><a href="#dataset">Synthetic Dataset Generation</a></li>
+                    <li><a href="#iso-controls">Non-Compliance Handling</a></li>
+                    <li><a href="#iso-controls">Policy Weighting</a></li>
+                    <li>
+                        <a href="#hierarchical-transformer-uses"
+                            >Hierarchical Transformer</a
+                        >
+                    </li>
+                    <li><a href="#output">Multi-label Mapping</a></li>
+                    <li><a href="#returns-back">Return Attributes</a></li>
+                </ul>
+                <h2>Memory</h2>
+                <h3>Context</h3>
+                <ul>
+                    <li>
+                        Split into 3 areas
+                        <ul>
+                            <li>
+                                Broad Context
+                                <ul>
+                                    <li>Flag a broad policy</li>
+                                    <li>DOES NOT apply label</li>
+                                </ul>
+                            </li>
+                            <li>
+                                Specialized Context
+                                <ul>
+                                    <li>Checks flags using CNM</li>
+                                    <li>DOES apply label</li>
+                                </ul>
+                            </li>
+                            <li>
+                                Fine-Grain Context
+                                <ul>
+                                    <li>
+                                        Checks label against specific control
+                                    </li>
+                                    <li>
+                                        Flags if policy is broken
+                                        <ul>
+                                            <li>
+                                                Will not apply anything if data
+                                                is ok
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Trained on the Language of Privacy
+                        <ul>
+                            <li>Specialized Vococab</li>
+                            <li>Train on 130k&gt; Policies</li>
+                            <li>
+                                Word Embeddings
+                                <ul>
+                                    <li>Subword Embeddings</li>
+                                    <li>FastText</li>
+                                    <li>BERT's WordPiece</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Applying a Contextual Neural Memory (CNM)
+                        <ul>
+                            <li>
+                                Agent Framework
+                                <ul>
+                                    <li>
+                                        Focus
+                                        <ul>
+                                            <li>
+                                                Data Layer <em>(Extraction)</em>
+                                                <ul>
+                                                    <li>
+                                                        Segments Text into
+                                                        chunks
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                Application Layer
+                                                <em>(Interface)</em>
+                                                <ul>
+                                                    <li>
+                                                        Can ask questions about
+                                                        the policy
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                ML Layer <em>(Analysis)</em>
+                                                <ul>
+                                                    <li>
+                                                        AI Annotation of the
+                                                        text
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        Design
+                                        <ul>
+                                            <li>
+                                                NIST AI Risk Management
+                                                Framework <em>(AI RMF)</em>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>Weightings</h3>
+                <ul>
+                    <li>Class Weighting</li>
+                    <li>Advanced Data Augmentation</li>
+                    <li>
+                        Attention Mechanism
+                        <ul>
+                            <li>Attention Weights</li>
+                            <li>Heatmap</li>
+                            <li>Real-time Highlighting on exact words</li>
+                            <li>
+                                Tokens that trigger an ISO compliance failure
+                            </li>
+                            <li>Audit Trail</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>Cluster Control</h3>
+                <ul>
+                    <li>
+                        Vector Database
+                        <ul>
+                            <li>https://www.pinecone.io/</li>
+                            <li>
+                                a specialized storage system designed to manage,
+                                index, and search high-dimensional vector
+                                embeddings
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Have an AI manage the cluster
+                        <ul>
+                            <li>
+                                Tasked to ensure data is processed correctly
+                            </li>
+                            <li>Local model that lives on the server</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h2>LSTM Layer</h2>
+                <ul>
+                    <li>
+                        Swap LSTM with a pure transformer
+                        <ul>
+                            <li>
+                                RoBERTa
+                                <ul>
+                                    <li>
+                                        Superior Language Understanding
+                                        <em>(Using Meta's Data)</em>
+                                    </li>
+                                    <li>Dynamic Masking Algo</li>
+                                    <li>
+                                        Variants of model
+                                        <ul>
+                                            <li>
+                                                12 layer w/ 125 million
+                                                parameters
+                                            </li>
+                                            <li>
+                                                24 layers w/ 355 million.
+                                                parameters
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                DeBERTa
+                                <ul>
+                                    <li>
+                                        Improvement of RoBERTa and BERT
+                                        <em>(Disentangled attention)</em>
+                                    </li>
+                                    <li>
+                                        Separates word content from its position
+                                        <em>(processes)</em>
+                                    </li>
+                                    <li>
+                                        Replaces softmax decoder with a mask
+                                        decoder
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                Fine-tuned LLM with Specialized Training/Testing
+                            </li>
+                        </ul>
+                    </li>
+                    <li>BERT-LSTM is a hybrid <em>(Note)</em></li>
+                </ul>
+                <h2>Dataset</h2>
+                <ul>
+                    <li>Mix Datasets</li>
+                    <li>
+                        Synthetic Dataset
+                        <ul>
+                            <li>Mix of SMS and company data</li>
+                            <li>Based on Real-World</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h2>ISO Controls</h2>
+                <ul>
+                    <li>
+                        ISO Non-Compliance
+                        <ul>
+                            <li>
+                                Employ Synthetic Data Generation
+                                <em>(Linked to Synthetic Dataset)</em>
+                            </li>
+                            <li>&quot;Rare Event&quot;</li>
+                        </ul>
+                    </li>
+                    <li>Apply Weight to policies</li>
+                </ul>
+                <h2>Model Architecture</h2>
+                <h3>Hierarchical Transformer <em>(Uses)</em></h3>
+                <ul>
+                    <li>
+                        LLM <em>(Operates Through)</em>
+                        <ul>
+                            <li>Glass-Box</li>
+                        </ul>
+                    </li>
+                    <li>
+                        Top Level
+                        <ul>
+                            <li>Category Layer</li>
+                            <li>
+                                High-level ISO domain
+                                <ul>
+                                    <li>
+                                        Access Control
+                                        <ul>
+                                            <li>Linked to CNM</li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        Data Retention
+                                        <ul>
+                                            <li>Linked to CNM</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Bottom Level
+                        <ul>
+                            <li>Attribute Layer</li>
+                            <li>Secondary Classifier</li>
+                            <li>
+                                Fine-grained requirements
+                                <ul>
+                                    <li>Password Length</li>
+                                    <li>Encryption Standards</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <h2>Output</h2>
+                <ul>
+                    <li>Multi-label</li>
+                    <li>
+                        Hierarchical Attributes
+                        <ul>
+                            <li>Mapped to ISO controls</li>
+                        </ul>
+                    </li>
+                </ul>
+                <h3>Returns back</h3>
+                <ul>
+                    <li>Number of flags</li>
+                    <li>What data triggered a flag</li>
+                    <li>Which control was broken</li>
+                </ul>
+            </main>
+        </div>
+        <footer>
+            <p>Generated by MD to Deploy</p>
+        </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toggle = document.getElementById("sidebar-toggle");
+                const sidebar = document.getElementById("sidebar");
+
+                if (toggle && sidebar) {
+                    toggle.addEventListener("click", () => {
+                        sidebar.classList.toggle("active");
+                    });
+
+                    // Optional: Close sidebar when clicking outside on mobile
+                    document.addEventListener("click", (e) => {
+                        if (
+                            window.innerWidth <= 768 &&
+                            sidebar.classList.contains("active") &&
+                            !sidebar.contains(e.target) &&
+                            !toggle.contains(e.target)
+                        ) {
+                            sidebar.classList.remove("active");
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
 </html>

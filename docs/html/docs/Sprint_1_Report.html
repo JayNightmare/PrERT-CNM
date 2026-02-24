@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sprint 1 Report - Masters</title>
+        <link rel="stylesheet" href="../css/styles.css" />
+        <style>
+            :root {
+                --accent-color: #b366ff;
+                --accent-text-color: #000000;
+            }
+            pre {
+                background-color: #f4f4f4;
+                padding: 10px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            code {
+                font-family: Consolas, monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <button id="sidebar-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <h1>Masters</h1>
+        </header>
+        <div class="container">
+            <nav id="sidebar">
+                <ul>
+                    <li>
+                        <a href="../index.html"><strong>Home</strong></a>
+                    </li>
+                    <li><a href="Sprint_1_Report.html">Sprint 1 Report</a></li>
+                    <li>
+                        <a href="Architecture-Stack.html">Architecture-Stack</a>
+                    </li>
+                    <li>
+                        <a href="Funding_Proposal.html">Funding_Proposal</a>
+                    </li>
+                    <li><a href="how_to_use.html">how_to_use</a></li>
+                    <li><a href="Model.html">Model</a></li>
+                    <li><a href="README.html">README</a></li>
+                    <li><a href="../html/CHANGELOG.html">CHANGELOG</a></li>
+                    <li><a href="../html/MEMORY.html">MEMORY</a></li>
+                    <li><a href="../html/README.html">README</a></li>
+                </ul>
+            </nav>
+            <main>
+                <h1>
+                    Sprint 1 Implementation Report: Hierarchical Multi-Label
+                    Architecture
+                </h1>
+                <p>
+                    This report details the implementation, refactoring, and
+                    testing process taken during Month 1 to map abstract
+                    international privacy standards into verifiable,
+                    quantifiable metrics using a structured Bayesian risk
+                    engine.
+                </p>
+
+                <h2>1. Config & Data Foundation</h2>
+                <h3>
+                    Hierarchical Configuration
+                    (<code>privacy_indicators.json</code>)
+                </h3>
+                <p>
+                    We pivoted from a flat metric structure to a
+                    <strong>Hierarchical Multi-Label Classification</strong>
+                    mapping. This enables fine-grained attributes to
+                    simultaneously map to overlapping frameworks (e.g., GDPR and
+                    NIST) by grouping them under universal categories.
+                </p>
+                <pre><code class="language-json">{
+	"categories": {
+		"Data_Minimization": {
+			"attributes": {
+				"collection_necessity_score": {
+					"frameworks": ["GDPR:Article_5", "NIST_Privacy_Framework:CT_DP_P"]
+				}
+			}
+		}
+	}
+}</code></pre>
+
+                <h3>
+                    Data Loading (<code>loader.py</code> &
+                    <code>download.py</code>)
+                </h3>
+                <p>
+                    To prevent the Bayesian network from collapsing under
+                    malformed constraints, we implemented rigorous schemas using
+                    <code>Pydantic</code>.
+                </p>
+                <pre><code class="language-python">class CategoryConfig(BaseModel):
+    attributes: Dict[str, AttributeConfig] = Field(description="Dictionary of bottom-level attributes mapped.")</code></pre>
+                <p>
+                    Additionally, <code>data/download.py</code> was automated to
+                    securely fetch and locally serialize the OPP-115 policy
+                    dataset via Hugging Face <code>datasets</code>, creating the
+                    offline corpus required for Month 2 fine-tuning.
+                </p>
+
+                <h2>2. Models Layer (<code>privacy_bert.py</code>)</h2>
+                <p>
+                    The perceptual layer establishes a
+                    <code>PrivacyFeatureExtractor</code> capable of wrapping
+                    Hugging Face Transformers. The extractor tokenizes incoming
+                    privacy policies and prepares the contextual output tensors
+                    required by the risk engine.
+                </p>
+                <pre><code class="language-python">from models.privacy_bert import PrivacyFeatureExtractor
+extractor = PrivacyFeatureExtractor()
+features = extractor.extract_features("We collect your data to improve services.")
+# Tensor Geometry: [Batch Size, Hidden Dimensions]</code></pre>
+
+                <h2>3. Risk Engine (<code>bayesian_scorer.py</code>)</h2>
+                <p>
+                    The reasoning layer replaces arbitrary risk matrices with
+                    strict probabilistic inference using <code>pgmpy</code>. The
+                    <code>BayesianRiskEngine</code> dynamically reads the
+                    hierarchical configuration and constructs a Directed Acyclic
+                    Graph (DAG) on the fly mapping <code>Attribute</code> ->
+                    <code>Category</code> -> <code>Framework Risk</code>.
+                </p>
+                <pre><code class="language-python">def build_topology_from_config(self, config: RootConfig):
+    # Dynamically maps bottom-level features to higher-level frameworks
+    for category_name, category_data in config.categories.items():
+        for attribute_name, attribute_config in category_data.attributes.items():
+            edges.append((attribute_name, category_name))
+            for framework_clause in attribute_config.frameworks:
+                framework_name = framework_clause.split(":")[0]
+                edges.append((category_name, f"{framework_name}_Risk"))</code></pre>
+
+                <h2>
+                    4. Testing Process & Results (<code>test_pipeline.py</code>)
+                </h2>
+                <p>
+                    We implemented testing paradigms targeting the structural
+                    integrity of the DAG generation and the strictness of the
+                    Pydantic JSON boundaries. The testing pipeline successfully
+                    forces the system to translate complex JSON hierarchies into
+                    active probabilistic nodes.
+                </p>
+                <p>
+                    <strong
+                        >End-to-End Test Results (<code>pytest</code>
+                        output):</strong
+                    >
+                </p>
+                <pre><code class="language-text">=============== test session starts ===============
+platform win32 -- Python 3.12.8, pytest-8.3.4, pluggy-1.5.0
+collected 5 items
+
+tests/test_pipeline.py::TestSyntheticRiskPipeline::test_config_validation PASSED                                            [ 20%]
+tests/test_pipeline.py::TestSyntheticRiskPipeline::test_end_to_end_scoring_consistency PASSED                               [ 40%]
+tests/test_pipeline.py::TestSyntheticRiskPipeline::test_bayesian_uncertainty_bounds PASSED                                  [ 60%]
+tests/test_pipeline.py::TestSyntheticRiskPipeline::test_dynamic_topology_generation PASSED                                  [ 80%]
+tests/test_pipeline.py::TestSyntheticRiskPipeline::test_privacy_bert_feature_extraction PASSED                              [100%]
+
+================ 5 passed, 2 warnings in 5.42s ================</code></pre>
+            </main>
+        </div>
+        <footer>
+            <p>Generated by MD to Deploy (Manual Override)</p>
+        </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const toggle = document.getElementById("sidebar-toggle");
+                const sidebar = document.getElementById("sidebar");
+
+                if (toggle && sidebar) {
+                    toggle.addEventListener("click", () => {
+                        sidebar.classList.toggle("active");
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
