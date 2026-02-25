@@ -9,7 +9,8 @@ from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 
 class ComplianceReasoning(BaseModel):
-    thought_process: str = Field(description="A concise, single-paragraph reasoning explaining why the specific salience_tokens in the text violate the violated_control.")
+    is_compliant: bool = Field(description="True if the text segment complies with the control, False if it violates the control.")
+    thought_process: str = Field(description="A concise, single-paragraph reasoning explaining why the text violates or complies with the control.")
 
 class CNMAgent:
     def __init__(self, llm):
@@ -17,7 +18,7 @@ class CNMAgent:
         self.parser = JsonOutputParser(pydantic_object=ComplianceReasoning)
         
         template = """[INST] You are an expert Privacy and Security Auditor. 
-Your task is to provide a concise, single-paragraph explanation of why the high-salience tokens in the given text segment violate the specified compliance control. Make sure to use the broader document context to inform your reasoning.
+Your task is to determine whether the given text segment complies with or violates the specified compliance control. Provide a concise, single-paragraph explanation of your reasoning based on the extracted tokens and broader context.
 
 Triggered Text Segment:
 "{text_segment}"
@@ -25,25 +26,29 @@ Triggered Text Segment:
 Broader Document Context:
 "{broader_context}"
 
-Violated Control:
+Control to Evaluate:
 {violated_control}
 
 High-Salience Tokens (Extracted by DeBERTa):
 {heatmap_tokens}
 
-Output Requirements:
-{format_instructions}
+Respond entirely with a markdown JSON block explicitly matching this structure:
+```json
+{{
+  "is_compliant": false,
+  "thought_process": "<Provide your unique explanation here based on the text segment>"
+}}
+```
 
-Return ONLY valid JSON. No prefix, no suffix, no markdown formatting. [/INST]
-{{"thought_process": \""""
+Return ONLY the markdown JSON block. [/INST]
+"""
         
         self.prompt = PromptTemplate(
             template=template,
             input_variables=["text_segment", "broader_context", "violated_control", "heatmap_tokens"],
-            partial_variables={"format_instructions": self.parser.get_format_instructions()}
         )
         
-        self.chain = self.prompt | self.llm | (lambda x: '{"thought_process": "' + x) | self.parser
+        self.chain = self.prompt | self.llm | self.parser
         
     def generate_reasoning(self, heatmap_tokens: str, context: str, text_segment: str, violated_control: str) -> dict:
         try:

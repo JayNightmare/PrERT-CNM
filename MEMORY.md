@@ -63,6 +63,7 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 - **[Completed]** Refactored inference pipeline into strict 5-step execution sequence integrating Ingest, Encode, Attention Heatmaps, and CNM Reasoning Outputs, optimizing schema for UI consumption.
 - **[Completed]** Created advanced fine-tuning scaffold for DeBERTa utilizing K-Fold cross-validation on the OPP-115 dataset to rigorously prevent data leakage during Month 2 training sweeps.
 - **[Completed]** Conducted comprehensive Sprint 1 Review and generated `docs/Sprint_1_Review.md`, identifying critical missing regulatory source texts for ingestion.
+- **[Completed]** Transitioned PrERT-CNM evaluation logic from DeBERTa Zero-Shot probabilities to Generative Agent-Driven (Mistral LLM) compliance checking to proactively capture complex, absolute compliance violations.
 
 ## Next Steps
 
@@ -72,3 +73,4 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 ## Architectural Decisions
 
 - Decoupled Neural Extraction from Probabilistic Inference: Standard NLP text classifiers suffer from opacity and probability collapse. Using a Bayesian Network on top of the transformer representations forces the engine to explicitly manage uncertainty and causal structures, making it resilient to adversarial legal phrasing. We must remain skeptical of end-to-end differentiable solutions for compliance—explicit probabilistic maps afford auditability required by GDPR and NIST.
+- Transitioned to Agent-Driven Compliance Evaluation: The Zero-Shot NLI sequence classification approach proved insufficient for absolute policy violations that relied on nuanced cross-clause context. By forwarding DeBERTa's mathematical attention matrices (heatmaps) and the broader document context to the Mistral generative cognitive agent, the agent now explicitly evaluates compliance (`{"is_compliant": bool}`) through Chain-of-Thought reasoning rather than relying on brittle zero-shot probability thresholds (`prob > 0.5`).

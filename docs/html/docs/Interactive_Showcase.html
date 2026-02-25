@@ -158,7 +158,41 @@
                             );
                         }
 
-                        const data = await response.json();
+                        const taskData = await response.json();
+                        const taskId = taskData.task_id;
+
+                        statusDiv.textContent = `Analysis in progress...`;
+
+                        let data = null;
+                        while (true) {
+                            await new Promise((resolve) =>
+                                setTimeout(resolve, 3000),
+                            );
+                            const statusResp = await fetch(
+                                `${baseUrl}/analyze/status/${taskId}`,
+                            );
+                            if (!statusResp.ok)
+                                throw new Error(
+                                    `Polling failed: ${statusResp.status}`,
+                                );
+
+                            const statusJson = await statusResp.json();
+                            if (statusJson.status === "completed") {
+                                data = statusJson.result;
+                                break;
+                            } else if (statusJson.status === "processing") {
+                                statusDiv.textContent = statusJson.message
+                                    ? `[Status] ${statusJson.message}`
+                                    : `Processing...`;
+                                continue;
+                            } else if (statusJson.status === "error") {
+                                throw new Error(
+                                    statusJson.error ||
+                                        "Pipeline inference failed.",
+                                );
+                            }
+                        }
+
                         statusDiv.textContent = "";
 
                         // Inject overall status

@@ -20,7 +20,7 @@ class TargetSchema(RootModel):
     root: Dict[str, CategorySchema]
 
 class TargetValidator:
-    def __init__(self, schema_path: str = "data/schemas/iso_targets.json"):
+    def __init__(self, schema_path: str = "../data/schemas/iso_targets.json"):
         self.schema_path = schema_path
         self._flattened_targets = None
         self._tensor_weights = None

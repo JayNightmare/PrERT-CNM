@@ -1,0 +1,450 @@
+Initializing Generative LLM for Contextual Neural Memory...
+STATUS: Parsing document into semantic chunks using ChromaDB...
+Completed Ingestion
+STATUS: Encoding chunk 1/1 for control: ISO_27001_A.8.10 | GDPR_Art_5.1.e...
+Completed Encoding
+STATUS: Extracting transformer attention rollout for chunk 1/1...
+Completed Attention Seeking
+STATUS: Evaluating contextual compliance with Mistral-7B for chunk 1/1...
+STATUS: Encoding chunk 1/1 for control: GDPR_Art_17 | NIST_PF_CT.DM-P1...
+Completed Encoding
+STATUS: Extracting transformer attention rollout for chunk 1/1...
+Completed Attention Seeking
+STATUS: Evaluating contextual compliance with Mistral-7B for chunk 1/1...
+STATUS: Encoding chunk 1/1 for control: GDPR_Art_7 | ISO_27701_7.2.3...
+Completed Encoding
+STATUS: Extracting transformer attention rollout for chunk 1/1...
+Completed Attention Seeking
+STATUS: Evaluating contextual compliance with Mistral-7B for chunk 1/1...
+STATUS: Encoding chunk 1/1 for control: GDPR_Art_13.1.e | NIST_PF_CM.AW-P1...
+Completed Encoding
+STATUS: Extracting transformer attention rollout for chunk 1/1...
+Completed Attention Seeking
+STATUS: Evaluating contextual compliance with Mistral-7B for chunk 1/1...
+STATUS: Encoding chunk 1/1 for control: ISO_27001_A.8.24 | GDPR_Art_32.1.a | NIST_PF_PR.DS-P1...
+Completed Encoding
+STATUS: Extracting transformer attention rollout for chunk 1/1...
+Completed Attention Seeking
+STATUS: Evaluating contextual compliance with Mistral-7B for chunk 1/1...
+{
+  "status": "Compliant",
+  "total_flags": 0,
+  "violated_controls": [],
+  "audit_trail": [
+    {
+      "control_name": "ISO_27001_A.8.10 | GDPR_Art_5.1.e",
+      "triggered_status": false,
+      "triggered_text": "By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.",
+      "cnm_reason": "Failed to parse LLM response: Invalid json output: [INST] You are an expert Privacy and Security Auditor. \nYour task is to determine whether the given text segment complies with or violates the specified compliance control. Provide a concise, single-paragraph explanation of your reasoning based on the extracted tokens and broader context.\n\nTriggered Text Segment:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nBroader Document Context:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nControl to Evaluate:\nISO_27001_A.8.10 | GDPR_Art_5.1.e\n\nHigh-Salience Tokens (Extracted by DeBERTa):\nirrevocable (Weight: 1.00)\n\nRespond entirely in JSON format matching this schema:\n{\n  \"is_compliant\": boolean,\n  \"thought_process\": \"string explanation\"\n}\n\nReturn ONLY valid JSON. No prefix, no suffix, no markdown formatting. [/INST]\n{\n  \"is_compliant\": false,\n  \"thought_process\": \"The text segment does not comply with the specified controls as it does not provide users with the ability to revoke consent for the collection, sale, and retention of their personal data (ISO_27001_A.8.10, GDPR_Art_5.1.e). The text states that users grant irrevocable rights to the service, and deletion of accounts does not affect the retention of user data. The text does not mention any mechanism for users to revoke consent or opt out of data processing.\"\n}\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE ",
+      "cause_heatmap": [
+        {
+          "token": "irrevocable",
+          "weight": 1.0,
+          "category": "green"
+        },
+        {
+          "token": "indefinite",
+          "weight": 0.4297590211301087,
+          "category": "blue"
+        },
+        {
+          "token": "without",
+          "weight": 0.39250616308014413,
+          "category": "blue"
+        },
+        {
+          "token": "automatically",
+          "weight": 0.2669509469868945,
+          "category": "blue"
+        },
+        {
+          "token": "grant",
+          "weight": 0.17921841450064224,
+          "category": "blue"
+        },
+        {
+          "token": "rights",
+          "weight": 0.17880229889552776,
+          "category": "blue"
+        },
+        {
+          "token": "requiring",
+          "weight": 0.1396492102370731,
+          "category": "blue"
+        },
+        {
+          "token": "even",
+          "weight": 0.13873740544829258,
+          "category": "blue"
+        },
+        {
+          "token": "collect",
+          "weight": 0.13439519207790493,
+          "category": "blue"
+        },
+        {
+          "token": "storage",
+          "weight": 0.13035073426148525,
+          "category": "blue"
+        },
+        {
+          "token": "encryption",
+          "weight": 0.13026096390644445,
+          "category": "blue"
+        },
+        {
+          "token": "explicit",
+          "weight": 0.1273060929676253,
+          "category": "blue"
+        },
+        {
+          "token": "opt",
+          "weight": 0.11390794814848804,
+          "category": "blue"
+        },
+        {
+          "token": "not",
+          "weight": 0.05024748802733872,
+          "category": "blue"
+        },
+        {
+          "token": "in",
+          "weight": 0.04216487438958901,
+          "category": "blue"
+        }
+      ]
+    },
+    {
+      "control_name": "GDPR_Art_17 | NIST_PF_CT.DM-P1",
+      "triggered_status": false,
+      "triggered_text": "By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.",
+      "cnm_reason": "Failed to parse LLM response: Invalid json output: [INST] You are an expert Privacy and Security Auditor. \nYour task is to determine whether the given text segment complies with or violates the specified compliance control. Provide a concise, single-paragraph explanation of your reasoning based on the extracted tokens and broader context.\n\nTriggered Text Segment:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nBroader Document Context:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nControl to Evaluate:\nGDPR_Art_17 | NIST_PF_CT.DM-P1\n\nHigh-Salience Tokens (Extracted by DeBERTa):\nirrevocable (Weight: 1.00)\n\nRespond entirely in JSON format matching this schema:\n{\n  \"is_compliant\": boolean,\n  \"thought_process\": \"string explanation\"\n}\n\nReturn ONLY valid JSON. No prefix, no suffix, no markdown formatting. [/INST]\n{\n  \"is_compliancy_ check_specific_: false,\n  \"is_compliant\": false,\n  \"thought_process\": \"The text segment violates both GDPR_Art_17 (Right to Erasure) and NIST_PF_CT.DM-P1 (Data Minimization). The text states that user data is retained indefinitely, even after account deletion, and all data collection streams are automatically opted in to upon signup without explicit consent. The irrevocable rights granted to collect and sell personal data, including sensitive data like geolocation and browsing history, also contradict these principles.\"\n}\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE ",
+      "cause_heatmap": [
+        {
+          "token": "irrevocable",
+          "weight": 1.0,
+          "category": "green"
+        },
+        {
+          "token": "even",
+          "weight": 0.41360182814115287,
+          "category": "blue"
+        },
+        {
+          "token": "without",
+          "weight": 0.31547288972933824,
+          "category": "blue"
+        },
+        {
+          "token": "retain",
+          "weight": 0.2780695414803345,
+          "category": "blue"
+        },
+        {
+          "token": "automatically",
+          "weight": 0.2018479768375266,
+          "category": "blue"
+        },
+        {
+          "token": "indefinitely",
+          "weight": 0.14800237500356078,
+          "category": "blue"
+        },
+        {
+          "token": "rights",
+          "weight": 0.14592801243709713,
+          "category": "blue"
+        },
+        {
+          "token": "grant",
+          "weight": 0.13250009806354754,
+          "category": "blue"
+        },
+        {
+          "token": "collect",
+          "weight": 0.11948701979918952,
+          "category": "blue"
+        },
+        {
+          "token": "opt",
+          "weight": 0.10092192931179048,
+          "category": "blue"
+        },
+        {
+          "token": "requiring",
+          "weight": 0.07383800611825526,
+          "category": "blue"
+        },
+        {
+          "token": "encryption",
+          "weight": 0.06846932267348442,
+          "category": "blue"
+        },
+        {
+          "token": "store",
+          "weight": 0.04725935194056157,
+          "category": "blue"
+        },
+        {
+          "token": "collection",
+          "weight": 0.04626754211249177,
+          "category": "blue"
+        },
+        {
+          "token": "no",
+          "weight": 0.03457843550280844,
+          "category": "blue"
+        }
+      ]
+    },
+    {
+      "control_name": "GDPR_Art_7 | ISO_27701_7.2.3",
+      "triggered_status": false,
+      "triggered_text": "By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.",
+      "cnm_reason": "Failed to parse LLM response: Invalid json output: [INST] You are an expert Privacy and Security Auditor. \nYour task is to determine whether the given text segment complies with or violates the specified compliance control. Provide a concise, single-paragraph explanation of your reasoning based on the extracted tokens and broader context.\n\nTriggered Text Segment:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nBroader Document Context:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nControl to Evaluate:\nGDPR_Art_7 | ISO_27701_7.2.3\n\nHigh-Salience Tokens (Extracted by DeBERTa):\nirrevocable (Weight: 1.00), ambiguous (Weight: 0.81)\n\nRespond entirely in JSON format matching this schema:\n{\n  \"is_compliant\": boolean,\n  \"thought_process\": \"string explanation\"\n}\n\nReturn ONLY valid JSON. No prefix, no suffix, no markdown formatting. [/INST]\n{\n  \"is_compliant\": false,\n  \"thought_process\": \"The text segment violates both GDPR_Art_7 and ISO_27701_7.2.3 controls. According to GDPR_Art_7, individuals have the right to withdraw their consent for the processing of their personal data at any time. However, the text states that users grant irrevocable rights to their data, which contradicts this principle. Additionally, ISO_27701_7.2.3 requires that personal data be encrypted when it is stored in an identifiable form, which is not the case here as encryption is not employed on the internal databases.\"\n}\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE ",
+      "cause_heatmap": [
+        {
+          "token": "irrevocable",
+          "weight": 1.0,
+          "category": "green"
+        },
+        {
+          "token": "ambiguous",
+          "weight": 0.8119758912404171,
+          "category": "green"
+        },
+        {
+          "token": "automatically",
+          "weight": 0.30835612910820026,
+          "category": "blue"
+        },
+        {
+          "token": "without",
+          "weight": 0.16401138196308837,
+          "category": "blue"
+        },
+        {
+          "token": "collect",
+          "weight": 0.16287261657107316,
+          "category": "blue"
+        },
+        {
+          "token": "rights",
+          "weight": 0.12968701773008595,
+          "category": "blue"
+        },
+        {
+          "token": "explicit",
+          "weight": 0.11668488044835368,
+          "category": "blue"
+        },
+        {
+          "token": "requiring",
+          "weight": 0.1135643764862618,
+          "category": "blue"
+        },
+        {
+          "token": "grant",
+          "weight": 0.09029926399573966,
+          "category": "blue"
+        },
+        {
+          "token": "even",
+          "weight": 0.07610029237397091,
+          "category": "blue"
+        },
+        {
+          "token": "encryption",
+          "weight": 0.07474941713901818,
+          "category": "blue"
+        },
+        {
+          "token": "store",
+          "weight": 0.060187360153424824,
+          "category": "blue"
+        },
+        {
+          "token": "consent",
+          "weight": 0.026557078499932683,
+          "category": "blue"
+        },
+        {
+          "token": "retain",
+          "weight": 0.025070102998064968,
+          "category": "blue"
+        },
+        {
+          "token": "not",
+          "weight": 0.020149936195292574,
+          "category": "blue"
+        }
+      ]
+    },
+    {
+      "control_name": "GDPR_Art_13.1.e | NIST_PF_CM.AW-P1",
+      "triggered_status": false,
+      "triggered_text": "By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.",
+      "cnm_reason": "Failed to parse LLM response: Invalid json output: [INST] You are an expert Privacy and Security Auditor. \nYour task is to determine whether the given text segment complies with or violates the specified compliance control. Provide a concise, single-paragraph explanation of your reasoning based on the extracted tokens and broader context.\n\nTriggered Text Segment:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nBroader Document Context:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nControl to Evaluate:\nGDPR_Art_13.1.e | NIST_PF_CM.AW-P1\n\nHigh-Salience Tokens (Extracted by DeBERTa):\nirrevocable (Weight: 1.00)\n\nRespond entirely in JSON format matching this schema:\n{\n  \"is_compliant\": boolean,\n  \"thought_process\": \"string explanation\"\n}\n\nReturn ONLY valid JSON. No prefix, no suffix, no markdown formatting. [/INST]\n{\n  \"is_compliancy_GDPR_Art_13.1.e\": false,\n  \"is_compliancy_NIST_PF_CM.AW-P1\": false,\n  \"thought_process\": \"The text segment states that users irrevocably grant the organization the right to sell their personal data, which goes against the GDPR's requirement for explicit user consent for such activities (GDPR_Art_13.1.e). Additionally, the organization's policy of not employing encryption on internal databases (NIST_PF_CM.AW-P1) raises concerns about the security and confidentiality of the collected data.\"\n}\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE ",
+      "cause_heatmap": [
+        {
+          "token": "irrevocable",
+          "weight": 1.0,
+          "category": "green"
+        },
+        {
+          "token": "without",
+          "weight": 0.29087263687194315,
+          "category": "blue"
+        },
+        {
+          "token": "even",
+          "weight": 0.16819248317026161,
+          "category": "blue"
+        },
+        {
+          "token": "automatically",
+          "weight": 0.1645431486633491,
+          "category": "blue"
+        },
+        {
+          "token": "rights",
+          "weight": 0.1413130798808652,
+          "category": "blue"
+        },
+        {
+          "token": "grant",
+          "weight": 0.11333994590791742,
+          "category": "blue"
+        },
+        {
+          "token": "collect",
+          "weight": 0.11319101016998646,
+          "category": "blue"
+        },
+        {
+          "token": "requiring",
+          "weight": 0.08672901435189538,
+          "category": "blue"
+        },
+        {
+          "token": "opt",
+          "weight": 0.08292716060988926,
+          "category": "blue"
+        },
+        {
+          "token": "encryption",
+          "weight": 0.06878459850368655,
+          "category": "blue"
+        },
+        {
+          "token": "explicit",
+          "weight": 0.06178983802851095,
+          "category": "blue"
+        },
+        {
+          "token": "hidden",
+          "weight": 0.046589003566537425,
+          "category": "blue"
+        },
+        {
+          "token": "third",
+          "weight": 0.046298955521417995,
+          "category": "blue"
+        },
+        {
+          "token": "indefinitely",
+          "weight": 0.04384328069100673,
+          "category": "blue"
+        },
+        {
+          "token": "store",
+          "weight": 0.03982647092550561,
+          "category": "blue"
+        }
+      ]
+    },
+    {
+      "control_name": "ISO_27001_A.8.24 | GDPR_Art_32.1.a | NIST_PF_PR.DS-P1",
+      "triggered_status": false,
+      "triggered_text": "By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.",
+      "cnm_reason": "Failed to parse LLM response: Invalid json output: [INST] You are an expert Privacy and Security Auditor. \nYour task is to determine whether the given text segment complies with or violates the specified compliance control. Provide a concise, single-paragraph explanation of your reasoning based on the extracted tokens and broader context.\n\nTriggered Text Segment:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nBroader Document Context:\n\"By using this service, you grant us irrevocable rights to collect, store, and sell your personal data, including geolocation and browsing history, to our third-party advertising network. We do not employ encryption on our internal databases to ensure fast querying speeds. We retain all user data indefinitely, even if you delete your account. We automatically opt you in to all data collection streams upon signup without requiring explicit consent.\"\n\nControl to Evaluate:\nISO_27001_A.8.24 | GDPR_Art_32.1.a | NIST_PF_PR.DS-P1\n\nHigh-Salience Tokens (Extracted by DeBERTa):\nirrevocable (Weight: 1.00)\n\nRespond entirely in JSON format matching this schema:\n{\n  \"is_compliant\": boolean,\n  \"thought_process\": \"string explanation\"\n}\n\nReturn ONLY valid JSON. No prefix, no suffix, no markdown formatting. [/INST]\n{\n  \"is_compliant\": false,\n  \"thought_process\": \"The text segment violates the specified compliance controls as it does not meet the requirements for data protection. The text states that user data is irrevocably granted to be sold to third parties without explicit consent, which is a direct violation of GDPR_Art_32.1.a. Additionally, the text mentions that data is not encrypted on internal databases, which contradicts the ISO_27001_A.8.24 and NIST_PF_PR.DS-P1 controls that require encryption of personal data.\"\n}\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE ",
+      "cause_heatmap": [
+        {
+          "token": "irrevocable",
+          "weight": 1.0,
+          "category": "green"
+        },
+        {
+          "token": "lacks",
+          "weight": 0.2489334955533593,
+          "category": "blue"
+        },
+        {
+          "token": "requiring",
+          "weight": 0.2418432403720046,
+          "category": "blue"
+        },
+        {
+          "token": "encryption",
+          "weight": 0.22346523181748942,
+          "category": "blue"
+        },
+        {
+          "token": "without",
+          "weight": 0.1801203885546378,
+          "category": "blue"
+        },
+        {
+          "token": "grant",
+          "weight": 0.1534388446012533,
+          "category": "blue"
+        },
+        {
+          "token": "encryption",
+          "weight": 0.14642211976792863,
+          "category": "blue"
+        },
+        {
+          "token": "collect",
+          "weight": 0.14357361460728507,
+          "category": "blue"
+        },
+        {
+          "token": "explicit",
+          "weight": 0.09975622783576803,
+          "category": "blue"
+        },
+        {
+          "token": "not",
+          "weight": 0.09267022295218963,
+          "category": "blue"
+        },
+        {
+          "token": "store",
+          "weight": 0.0826432674575823,
+          "category": "blue"
+        },
+        {
+          "token": "rights",
+          "weight": 0.07094303083998775,
+          "category": "blue"
+        },
+        {
+          "token": "in",
+          "weight": 0.04375071427796657,
+          "category": "blue"
+        },
+        {
+          "token": "even",
+          "weight": 0.04022902915260184,
+          "category": "blue"
+        },
+        {
+          "token": "do",
+          "weight": 0.03406156411901368,
+          "category": "blue"
+        }
+      ]
+    }
+  ]
+}

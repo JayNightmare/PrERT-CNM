@@ -1,12 +1,14 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
+import uuid
+from typing import Dict, Any
 from pathlib import Path
 
 from models.PrERT.pipeline import PrERTPipeline
 
-app = FastAPI(title="PrERT-CNM Interactive Showcase API", version="1.0")
+app = FastAPI(title="PrERT-CNM Interactive Showcase API", version="1.1")
 
 # Allow the frontend (HTML) to talk to this local server
 app.add_middleware(
@@ -28,13 +30,21 @@ except Exception as e:
     print(f"Error initializing backend: {e}")
     traceback.print_exc()
 
+# --- Task Storage ---
+# Stores results as { "task_id": { "status": "processing" | "completed" | "error", "result": {...}, "error": "..." } }
+tasks_db: Dict[str, Dict[str, Any]] = {}
+
 class PolicyAnalysisRequest(BaseModel):
     text: str
+
+class TaskResponse(BaseModel):
+    task_id: str
+    status: str
 
 class TokenHighlight(BaseModel):
     token: str
     weight: float
-    category: str  # 'red' (trigger), 'green' (context), 'blue' (safe)
+    category: str
 
 class AuditTrailEntry(BaseModel):
     control_name: str
@@ -53,34 +63,57 @@ class AnalysisResult(BaseModel):
     violated_controls: list[ViolatedControl]
     audit_trail: list[AuditTrailEntry]
 
-@app.post("/analyze", response_model=AnalysisResult)
-async def analyze_policy(request: PolicyAnalysisRequest):
-    """
-    Real endpoint invoking the PrERT-CNM inference pipeline.
-    It passes the document through Semantic Context Chunking, DeBERTa Encoding,
-    Attention Rollout, and finally Custom Multi-Label Classification.
-    """
+class AnalysisStatusResponse(BaseModel):
+    task_id: str
+    status: str
+    message: str | None = None
+    result: AnalysisResult | None = None
+    error: str | None = None
+
+def run_pipeline_task(task_id: str, content: str | bytes, is_pdf: bool):
     try:
         if pipeline is None:
-            raise HTTPException(status_code=500, detail="PrERT Pipeline failed to initialize locally. Check server logs (e.g. invalid ChromaDB credentials).")
-        # Pass document to the stateful pipeline
-        result = pipeline.process_document(request.text, is_pdf=False)
-        return AnalysisResult(**result)
-    except HTTPException as he:
-        raise he
+            raise Exception("PrERT Pipeline failed to initialize locally.")
+            
+        def status_updater(msg: str):
+            if task_id in tasks_db:
+                tasks_db[task_id]["message"] = msg
+                
+        result = pipeline.process_document(content, is_pdf=is_pdf, status_updater=status_updater)
+        tasks_db[task_id] = {
+            "status": "completed",
+            "result": result
+        }
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Pipeline inference error: {str(e)}")
+        tasks_db[task_id] = {
+            "status": "error",
+            "error": str(e)
+        }
 
-@app.post("/analyze/file", response_model=AnalysisResult)
-async def analyze_file(file: UploadFile = File(...)):
+@app.post("/analyze", response_model=TaskResponse)
+async def analyze_policy_start(request: PolicyAnalysisRequest, background_tasks: BackgroundTasks):
     """
-    Endpoint for uploading raw documents (.txt or .pdf).
+    Starts the analysis in the background and returns a task ID to avoid Cloudflare 524 timeouts.
     """
+    if pipeline is None:
+        raise HTTPException(status_code=500, detail="PrERT Pipeline failed to initialize locally.")
+        
+    task_id = str(uuid.uuid4())
+    tasks_db[task_id] = {"status": "processing"}
+    background_tasks.add_task(run_pipeline_task, task_id, request.text, False)
+    
+    return TaskResponse(task_id=task_id, status="processing")
+
+@app.post("/analyze/file", response_model=TaskResponse)
+async def analyze_file_start(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+    """
+    Starts file analysis in the background and returns a task ID.
+    """
+    if pipeline is None:
+        raise HTTPException(status_code=500, detail="PrERT Pipeline failed to initialize locally.")
+        
     try:
-        if pipeline is None:
-            raise HTTPException(status_code=500, detail="PrERT Pipeline failed to initialize locally.")
-            
         content = await file.read()
         is_pdf = file.filename.lower().endswith(".pdf")
         
@@ -90,18 +123,34 @@ async def analyze_file(file: UploadFile = File(...)):
             except UnicodeDecodeError:
                 raise HTTPException(status_code=400, detail="Text files must be UTF-8 encoded.")
                 
-        result = pipeline.process_document(content, is_pdf=is_pdf)
-        return AnalysisResult(**result)
-    except HTTPException as he:
-        raise he
+        task_id = str(uuid.uuid4())
+        tasks_db[task_id] = {"status": "processing"}
+        background_tasks.add_task(run_pipeline_task, task_id, content, is_pdf)
+        
+        return TaskResponse(task_id=task_id, status="processing")
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Pipeline inference error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to start file analysis: {str(e)}")
+
+@app.get("/analyze/status/{task_id}", response_model=AnalysisStatusResponse)
+async def get_analysis_status(task_id: str):
+    """
+    Poll this endpoint to get the status of the background task.
+    """
+    if task_id not in tasks_db:
+        raise HTTPException(status_code=404, detail="Task not found")
+        
+    task_info = tasks_db[task_id]
+    
+    return AnalysisStatusResponse(
+        task_id=task_id,
+        status=task_info["status"],
+        message=task_info.get("message"),
+        result=task_info.get("result"),
+        error=task_info.get("error")
+    )
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "pipeline": "initialized" if 'pipeline' in globals() else "error"}
-
-if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)

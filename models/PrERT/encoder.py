@@ -6,11 +6,10 @@ Scalability & Innovation: Standard BERT architectures fail on long-range depende
 import torch
 
 class PrERTEncoder:
-    def __init__(self, model_name: str = "microsoft/deberta-v3-base"):
-        # Import inside __init__ to allow lazy loading for API servers not requiring GPU overhead
-        from transformers import DebertaV2Model, DebertaV2Tokenizer
-        self.tokenizer = DebertaV2Tokenizer.from_pretrained(model_name)
-        self.model = DebertaV2Model.from_pretrained(model_name, output_attentions=True, output_hidden_states=True)
+    def __init__(self, model_name: str = "cross-encoder/nli-deberta-v3-base"):
+        from transformers import AutoModelForSequenceClassification, AutoTokenizer
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModelForSequenceClassification.from_pretrained(model_name, output_attentions=True, output_hidden_states=True)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
@@ -21,4 +20,4 @@ class PrERTEncoder:
             inputs = self.tokenizer(premise, return_tensors='pt', truncation=True, padding=True).to(self.device)
         with torch.set_grad_enabled(require_grad):
             outputs = self.model(**inputs)
-        return outputs.last_hidden_state, outputs.attentions, inputs
+        return outputs.logits, outputs.attentions, inputs
