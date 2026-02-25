@@ -45,6 +45,14 @@ To run the evaluation engine and showcase API locally with hot-reloading:
 uvicorn api.showcase_server:app --reload --host localhost --port 8000
 ```
 
+The API will be available at `http://127.0.0.1:8000`. You can verify the server is running by visiting the health check endpoint:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+When using the Interactive Showcase HTML frontend, set the **Backend API Server** field to `http://127.0.0.1:8000`.
+
 ### 5. Server Deployment (Production)
 
 For production environments, it is recommended to run the server using `gunicorn` with `uvicorn` workers to handle concurrent requests robustly.
@@ -60,6 +68,72 @@ Start the production server:
 ```bash
 gunicorn api.showcase_server:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
+
+### 6. Exposing the Local Server with Cloudflare Tunnel
+
+When running the PrERT-CNM server on your local PC and needing to expose it to the internet (e.g. for the hosted GitHub Pages frontend to reach the backend), you can use **Cloudflare Tunnel** (`cloudflared`). This avoids the **524 timeout error** that occurs when intermediate proxies or tunnelling protocols are not configured to allow long-running AI inference requests.
+
+#### Why This Is Needed
+
+The PrERT-CNM pipeline runs DeBERTa encoding, attention rollout, and CNM agent reasoning sequentially. For larger documents this process can exceed the default timeout thresholds of many reverse proxies and hosting platforms, resulting in a **HTTP 524 (A Timeout Occurred)** error. Running the server locally and tunnelling it via `cloudflared` bypasses these third-party timeout limits.
+
+#### Install Cloudflared
+
+Download and install `cloudflared` for your platform:
+
+- **macOS (Homebrew):**
+
+  ```bash
+  brew install cloudflared
+  ```
+
+- **Windows (winget):**
+
+  ```bash
+  winget install --id Cloudflare.cloudflared
+  ```
+
+- **Linux (Debian/Ubuntu):**
+
+  ```bash
+  curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
+  sudo dpkg -i cloudflared.deb
+  ```
+
+#### Start the Tunnel
+
+First, make sure the uvicorn server is running locally:
+
+```bash
+uvicorn api.showcase_server:app --reload --host localhost --port 8000
+```
+
+Then, in a **separate terminal**, start the Cloudflare quick tunnel:
+
+```bash
+cloudflared tunnel --url http://localhost:8000
+```
+
+`cloudflared` will output a public URL (e.g. `https://<random-subdomain>.trycloudflare.com`). Copy this URL and paste it into the **Backend API Server** field in the Interactive Showcase frontend, or use it as the base URL for API requests.
+
+#### Verifying the Tunnel
+
+Confirm the tunnel is working by calling the health endpoint through the public URL:
+
+```bash
+curl https://<random-subdomain>.trycloudflare.com/health
+```
+
+You should receive `{"status":"ok","pipeline":"initialized"}`.
+
+#### Troubleshooting the 524 Timeout
+
+If you still encounter a 524 error:
+
+1. **Ensure the local server is running** — confirm `uvicorn` is active and responding on `http://localhost:8000/health`.
+2. **Check cloudflared is connected** — the terminal running `cloudflared` should show an active connection with no errors.
+3. **Reduce document size** — very large documents increase inference time. Try a shorter policy text first to confirm the pipeline works end-to-end.
+4. **Check firewall rules** — ensure your local firewall is not blocking connections on port 8000.
 
 ---
 
