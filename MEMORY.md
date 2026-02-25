@@ -62,9 +62,11 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 - **[Completed]** Resolved HuggingFace Pipeline warnings related to `max_length` and `max_new_tokens` conflicts during Mistral generation by explicitly overriding the specific model `generation_config`.
 - **[Completed]** Refactored inference pipeline into strict 5-step execution sequence integrating Ingest, Encode, Attention Heatmaps, and CNM Reasoning Outputs, optimizing schema for UI consumption.
 - **[Completed]** Created advanced fine-tuning scaffold for DeBERTa utilizing K-Fold cross-validation on the OPP-115 dataset to rigorously prevent data leakage during Month 2 training sweeps.
+- **[Completed]** Conducted comprehensive Sprint 1 Review and generated `docs/Sprint_1_Review.md`, identifying critical missing regulatory source texts for ingestion.
 
 ## Next Steps
 
+- Procure authoritative source texts for NIST Privacy Framework, GDPR, and IEEE 7002, and automate batch ingestion via the `prert` pipeline to resolve incomplete Week 1 Task 1.
 - Integrate fine-tuning loop results into the broader CI/CD pipeline and evaluate final CV metrics against the >92.5% accuracy target.
 
 ## Architectural Decisions

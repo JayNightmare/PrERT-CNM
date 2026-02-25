@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import os
 from pathlib import Path
 
-from prert.pipeline import PrERTPipeline
+from models.PrERT.pipeline import PrERTPipeline
 
 app = FastAPI(title="PrERT-CNM Interactive Showcase API", version="1.0")
 

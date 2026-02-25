@@ -86,7 +86,7 @@ class TestSyntheticRiskPipeline:
     def test_privacy_bert_feature_extraction(self):
         # We verify that the model returns expected tensor geometries.
         # This isolates failures between the perception layer and reasoning layer.
-        from models.privacy_bert import PrivacyFeatureExtractor
+        from models.Privacy_Bert.privacy_bert import PrivacyFeatureExtractor
         extractor = PrivacyFeatureExtractor() # Fall back to stable bert-base-uncased
         
         sample_policy = "We collect your data to improve services."

@@ -31,10 +31,10 @@ pip install -r requirements.txt
 The ingestion layer relies on a Vector Database (ChromaDB) for Context Memory. Create a `.env` file in the root directory to configure the environment variables:
 
 ```env
-CHROMADB_COLLECTION_NAME=prert_memory
-CHROMADB_API_KEY=your_api_key_here
-CHROMADB_TENANT=default_tenant
-CHROMADB_DATABASE=default_database
+CHROMA_COLLECTION_NAME=prert_memory
+CHROMA_API_KEY=your_api_key_here
+CHROMA_TENANT=default_tenant
+CHROMA_DATABASE=default_database
 ```
 
 ### 4. Running Locally (Development)

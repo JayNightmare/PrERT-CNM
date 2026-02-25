@@ -42,7 +42,7 @@ The perceptual layer establishes a `PrivacyFeatureExtractor` capable of wrapping
 
 ```python
 # Extracting features that will eventually feed into our probabilistic engine
-from models.privacy_bert import PrivacyFeatureExtractor
+from models.Privacy_Bert.privacy_bert import PrivacyFeatureExtractor
 extractor = PrivacyFeatureExtractor()
 features = extractor.extract_features("We collect your data to improve services.")
 # Tensor Geometry: [Batch Size, Hidden Dimensions]
