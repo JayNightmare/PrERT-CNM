@@ -10,105 +10,183 @@ from .ingestion import DocumentIngestor
 from .encoder import PrERTEncoder
 from .attention import AttentionExplainer
 
-class MultiLabelClassificationHead(nn.Module):
-    def __init__(self, hidden_size: int, num_labels: int):
+class NLIClassificationHead(nn.Module):
+    def __init__(self, hidden_size: int):
         super().__init__()
         self.dense = nn.Linear(hidden_size, hidden_size)
         self.dropout = nn.Dropout(0.1)
-        self.out_proj = nn.Linear(hidden_size, num_labels)
+        self.out_proj = nn.Linear(hidden_size, 1)
         
     def forward(self, features: torch.Tensor) -> torch.Tensor:
-        x = features[:, 0, :]  # CLS token state
-        # Ensure input dtype aligns with layers to avoid Half/Float mismatch
+        x = features[:, 0, :]
         x = x.to(self.dense.weight.dtype)
         x = self.dropout(x)
         x = self.dense(x)
         x = torch.relu(x)
         x = self.dropout(x)
         x = self.out_proj(x)
-        return torch.sigmoid(x)
+        return x
 
 class PrERTPipeline:
     def __init__(self):
         self.ingestor = DocumentIngestor()
         self.encoder = PrERTEncoder()
         
-        # Hardcoded class weights representing normative bias toward specific standards
         self.explainer = AttentionExplainer(class_weights={"iso_27001": 1.5, "gdpr": 1.2})
         
-        # Baseline explicit mapping representation to link flags identically to regulatory schemas
-        self.iso_mapping = {
-            "data_retention": "ISO/IEC 27001:2022 A.8.10",
-            "encryption": "ISO/IEC 27001:2022 A.8.24"
-        }
-        self.num_labels = len(self.iso_mapping)
-        self.label_keys = list(self.iso_mapping.keys())
+        from langchain_huggingface import HuggingFacePipeline
+        from transformers import pipeline as hf_pipeline
+        from dotenv import load_dotenv
         
-        self.classification_head = MultiLabelClassificationHead(
-            hidden_size=self.encoder.model.config.hidden_size, 
-            num_labels=self.num_labels
+        load_dotenv()
+        
+        print("Initializing Generative LLM for Contextual Neural Memory...")
+        try:
+            generator = hf_pipeline(
+                "text-generation",
+                model="mistralai/Mistral-7B-Instruct-v0.2", 
+                device=0 if torch.cuda.is_available() else -1
+            )
+            
+            if hasattr(generator, "model") and hasattr(generator.model, "generation_config"):
+                generator.model.generation_config.max_length = None
+                
+            self.llm = HuggingFacePipeline(
+                pipeline=generator,
+                pipeline_kwargs={
+                    "max_new_tokens": 512,
+                    "return_full_text": False,
+                    "pad_token_id": 2
+                }
+            )
+        except Exception as e:
+            print(f"Warning: Failed to load Generative LLM: {str(e)}")
+            self.llm = None
+            
+        from .cnm_agent import CNMAgent
+        self.agent = CNMAgent(self.llm) if self.llm else None
+        
+        import json
+        from pathlib import Path
+        schema_path = Path(__file__).parent.parent / "data" / "schemas" / "iso_targets.json"
+        
+        self.iso_mapping = {}
+        self.iso_hypotheses = {}
+        with open(schema_path, "r") as f:
+            targets = json.load(f)
+            
+        for category, attributes in targets.items():
+            for attr_name, attr_data in attributes.items():
+                framework_str = " | ".join(attr_data["frameworks"])
+                concept = attr_name.replace("_", " ").lower()
+                hypothesis = f"This policy violates privacy standards regarding {concept}."
+                self.iso_mapping[attr_name] = framework_str
+                self.iso_hypotheses[attr_name] = hypothesis
+                
+        if "Missing_Encryption_At_Rest" in self.iso_hypotheses:
+            self.iso_hypotheses["Missing_Encryption_At_Rest"] = "This policy lacks adequate encryption or cryptography standards for data at rest and in transit."
+            
+        self.label_keys = list(self.iso_mapping.keys())
+        self.classification_head = NLIClassificationHead(
+            hidden_size=self.encoder.model.config.hidden_size
         ).to(self.encoder.device).to(self.encoder.model.dtype)
 
     def process_document(self, content: bytes | str, is_pdf: bool = False) -> dict:
         import uuid
         session_id = str(uuid.uuid4())
         
-        if is_pdf:
-            memory = self.ingestor.process_pdf(content, session_id)
-        else:
-            memory = self.ingestor.process_text(str(content), session_id)
+        memory = self.ingestor.process_document(content, is_pdf, session_id)
+        print("Completed Ingestion")
             
         audit_trail = []
         total_flags = 0
+        violated_controls = []
         
-        for segment_data in memory.retrieve_context(session_id=session_id):
+        all_chunks = memory.retrieve_context(session_id=session_id)
+        
+        for segment_data in all_chunks:
+            chunk_idx = segment_data["metadata"].get("chunk_idx", 0)
             text = segment_data["segment"]
             
-            # 1. Encode into context-aware representations (Ensure grad is enabled for backward pass)
-            self.encoder.model.zero_grad()
-            self.classification_head.zero_grad()
-            hidden_states, attentions, inputs = self.encoder.encode(text, require_grad=True)
+            broader_context_pieces = []
+            if chunk_idx > 0 and chunk_idx - 1 < len(all_chunks):
+                broader_context_pieces.append(all_chunks[chunk_idx - 1]["segment"])
+            broader_context_pieces.append(text)
+            if chunk_idx + 1 < len(all_chunks):
+                broader_context_pieces.append(all_chunks[chunk_idx + 1]["segment"])
+            broader_context = " ... ".join(broader_context_pieces)
             
-            # Hook the last layer's attention for gradient extraction
-            last_layer_attn = attentions[-1]
-            last_layer_attn.retain_grad()
-            
-            # 3. Process through Custom Multi-Label Head
-            probs = self.classification_head(hidden_states).squeeze(0)
-            
-            triggered_labels = [self.label_keys[i] for i, p in enumerate(probs) if p > 0.5]
-            
-            if triggered_labels:
-                total_flags += len(triggered_labels)
+            for label in self.label_keys:
+                hypothesis = self.iso_hypotheses[label]
+                violated_control = self.iso_mapping.get(label, "Unknown Control")
                 
-                for label in triggered_labels:
-                    class_idx = self.label_keys.index(label)
-                    target_logit = probs[class_idx]
+                self.encoder.model.zero_grad()
+                self.classification_head.zero_grad()
+                hidden_states, attentions, inputs = self.encoder.encode(text, hypothesis, require_grad=True)
+                print("Completed Encoding")
+                
+                last_layer_attn = attentions[-1]
+                last_layer_attn.retain_grad()
+                
+                entailment_logit = self.classification_head(hidden_states).squeeze(0)
+                prob = torch.sigmoid(entailment_logit).item()
+                
+                heatmap = self.explainer.extract_heatmap(
+                    entailment_logit, last_layer_attn, inputs.input_ids, self.encoder.tokenizer
+                )
+                print("Completed Attention Seeking")
+                
+                suspect_tokens = sorted(heatmap, key=lambda x: x["weight"], reverse=True)[:15]
+                
+                if suspect_tokens:
+                    max_weight = suspect_tokens[0]["weight"]
+                    for t in suspect_tokens:
+                        t["weight"] = (t["weight"] / max_weight) if max_weight > 0 else 0.0
+                        
+                        if prob > 0.5:
+                            if t["weight"] > 0.7:
+                                t["category"] = "red"
+                            elif t["weight"] > 0.3:
+                                t["category"] = "green"
+                            else:
+                                t["category"] = "blue"
+                        else:
+                            if t["weight"] > 0.5:
+                                t["category"] = "green"
+                            else:
+                                t["category"] = "blue"
+                                
+                if prob > 0.5:
+                    total_flags += 1
+                    is_compliant = False
                     
-                    # Generate class-specific heatmap via Gradient-Weighted Attention
-                    heatmap = self.explainer.generate_class_heatmap(
-                        target_logit, last_layer_attn, inputs.input_ids, self.encoder.tokenizer
-                    )
+                    salience_tokens_str = ", ".join([f"{t['token']} (Weight: {t['weight']:.2f})" for t in suspect_tokens if t["category"] in ["red", "green"]])
                     
-                    # Embedded full top 10 token heatmap to audit trail based on "weight" extraction
-                    suspect_tokens = sorted(heatmap, key=lambda x: x["weight"], reverse=True)[:10]
-                    
-                    # Normalize weights to range [0.2 - 1.0] for visible UI heatmap rendering
-                    if suspect_tokens:
-                        max_weight = suspect_tokens[0]["weight"]
-                        for t in suspect_tokens:
-                            t["weight"] = min(1.0, max(0.2, t["weight"] / max_weight)) if max_weight > 0 else 0.2
-                            
-                    audit_trail.append({
-                        "chunk": segment_data.get("chunk_idx", 0),
-                        "trigger_text": text[:200] + "...", 
-                        "highlighted_tokens": suspect_tokens,
-                        "violated_control": self.iso_mapping.get(label, "Unknown Control"),
-                        "confidence": float(probs[class_idx])
+                    if self.agent:
+                        analysis = self.agent.generate_reasoning(salience_tokens_str, broader_context, text, violated_control)
+                        thought_process = analysis.get("thought_process", "No reasoning provided.")
+                    else:
+                        thought_process = "Generative Agent offline. Cannot compute reasoning."
+                        
+                    violated_controls.append({
+                        "control": violated_control,
+                        "confidence": float(prob)
                     })
+                else:
+                    is_compliant = True
+                    thought_process = "DeBERTa mathematically asserts this segment does NOT entail a violation of the specified control."
+                        
+                audit_trail.append({
+                    "control_name": violated_control,
+                    "triggered_status": not is_compliant,
+                    "triggered_text": text,
+                    "cnm_reason": thought_process,
+                    "cause_heatmap": suspect_tokens
+                })
                 
         return {
-            "total_flags": total_flags,
             "status": "Non-Compliant" if total_flags > 0 else "Compliant",
+            "total_flags": total_flags,
+            "violated_controls": violated_controls,
             "audit_trail": audit_trail
         }

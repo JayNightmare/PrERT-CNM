@@ -71,7 +71,7 @@
                             placeholder="e.g., 'We collect your geolocation data endlessly without direct consent and keep it forever.'"
                         ></textarea>
 
-                        <div style="margin: 15px 0">
+                        <div class="upload-container">
                             <label for="policy-file"
                                 ><strong
                                     >Or upload a full document (.txt or
@@ -182,21 +182,37 @@
                                 let tokensHtml = entry.highlighted_tokens
                                     .map(
                                         (t) =>
-                                            `<span class="salience-token" style="background-color: rgba(255, 0, 0, ${t.weight.toFixed(2)});">${t.token}</span>`,
+                                            `<span class="salience-token token-${t.category}">${t.token}</span>`,
                                     )
                                     .join("");
 
+                                const isCompliant = entry.is_compliant;
+                                const iconHtml = isCompliant
+                                    ? `<span class="icon-tick">✅</span>`
+                                    : `<span class="icon-cross">❌</span>`;
+                                const borderClass = isCompliant
+                                    ? "entry-compliant"
+                                    : "entry-violating";
+                                const statusLabel = isCompliant
+                                    ? "Passed"
+                                    : `Failed (Conf: ${(entry.confidence * 100).toFixed(1)}%)`;
+
                                 auditContainer.innerHTML += `
-                                    <div class="audit-entry">
-                                        <p class="audit-control"><strong>Violated Control:</strong> <span class="audit-control-name">${entry.violated_control}</span> (Confidence: ${(entry.confidence * 100).toFixed(1)}%)</p>
-                                        <p><strong>Trigger Text (Chunk ${entry.chunk}):</strong> <em>"${entry.trigger_text}"</em></p>
-                                        <p><strong>High Salience Tokens (Transformer Attention):</strong><br/> <div class="audit-chunk">${tokensHtml}</div></p>
-                                    </div>
+                                    <details class="audit-entry ${borderClass}">
+                                        <summary>${iconHtml} <span class="audit-control-name">${entry.violated_control}</span> - ${statusLabel}</summary>
+                                        <div style="margin-top: 15px;">
+                                            <p><strong>Trigger Text (Chunk ${entry.chunk}):</strong><br/> <em>"${entry.trigger_text}"</em></p>
+                                            <p><strong>Surrounding Context Evaluated:</strong></p>
+                                            <div class="context-box">${entry.context_text}</div>
+                                            <p><strong>NLI Agent Thought Process:</strong><br/> <em style="color: #a0aec0;">${entry.thought_process}</em></p>
+                                            <p><strong>High Salience Tokens (Transformer Attention):</strong><br/> <div class="audit-chunk">${tokensHtml}</div></p>
+                                        </div>
+                                    </details>
                                 `;
                             });
                         } else {
                             auditContainer.innerHTML =
-                                "<p>No compliance violations detected.</p>";
+                                "<p>No compliance evaluations logged.</p>";
                         }
 
                         dashboard.classList.add("active");

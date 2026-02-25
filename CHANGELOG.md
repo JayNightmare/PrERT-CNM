@@ -6,7 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Suppressed transformers `max_length` vs `max_new_tokens` warning during text generation by explicitly unsetting `max_length` in the HuggingFace Pipeline's model generation config in `prert/pipeline.py`.
+
+### Changed
+
+- **[Rigorous Pipeline Execution]** Rewrote `prert/pipeline.py` to strip inline comments and strictly guarantee a traceable 5-step sequential flow: Ingest -> Encode (DeBERTa) -> Extract Attention (Heatmap) -> CNM Agent Reasoning (Mistral) -> Finish/Output. Explicitly logs each state transition for observability.
+- Refactored `prert/ingestion.py`, `prert/attention.py`, and `prert/cnm_agent.py` to remove inline comments and align method signatures (`process_document`, `extract_heatmap`, `generate_reasoning`) with the strict 5-step unified flow architecture.
+- Refactored `prert/pipeline.py` to calculate explicit Pass/Fail states for all mapped ISO controls regardless of violation.
+- Expanded the `TokenHighlight` engine to bin normalized DeBERTa attention gradients into categorical Red (High Risk), Green (Contextual), and Blue (Safe) token buckets.
+- Injected wider `broader_context` document slices directly from the `ContextMemoryBank` into the Mistral `PromptTemplate` to enhance LLM reasoning constraints.
+- Overhauled `showcase_server.py` API schema (`AuditTrailEntry`) to surface boolean compliance states.
+- Rewrote `Interactive_Showcase.html` to visualize data using HTML5 `<details>` standard accordions, grouping green ticks and red crosses dynamically alongside the CSS token grid.
+
 ### Added
+
+- **[Actionable Schema]** Overhauled `prert/pipeline.py` return dicts. The `Compliance Evaluation Results` now explicitly surfaces `status`, `total_flags`, and `violated_controls` (with mathematical classification confidence). Features restructured `audit_trail` outputs explicitly demanding UI-ready `triggered_status`, `cnm_reason`, and `cause_heatmap` token definitions mapping exactly to Tri-Color matrix UI logic.
+- **[Leak-Proof Finetuning Engine]** Scaffolded `prert/finetune.py` defining an advanced K-Fold cross-validation DeBERTa training loop over the `coastalcph/opp-115` repository explicitly structured to prevent overlapping context data leakage across train/validation folds.
 
 - Scaffolded Month 1 Agile Sprint Plan mapping international privacy standards to metrics (`docs/Agile_Sprint_Plan_Month_1.md`).
 - Scaffolded foundational `prert` pipeline module (`prert/ingestion.py`, `encoder.py`, `attention.py`, `pipeline.py`) incorporating context memory banks and transparent attention extraction logic.
@@ -31,4 +48,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Established a Pydantic-validated ground truth schema architecture (`config/target_validator.py` and `data/schemas/iso_targets.json`) supporting explicit hierarchy (Category -> Attribute) mapping coupled with regulatory framework tracing and embedded classification weights.
 - Auto-generated semantic synthetic policy benchmarking files (`tests/generate_synthetic_policies.py`) to map explicit edge-case failures without reliance on public dataset noise.
 - Renamed and structurally aligned `AttentionExplainer` and frontend pipeline payloads to uniformly utilize `weight` over `salience` ensuring deterministic API ingestion behavior.
-- **[Interpretability System Overhaul]**: Bypassed generic sequence Attention Rollout in favor of class-specific Gradient-Weighted Attention (`logit.backward()`). Features native stop-word routing penalization and mathematically isolates exactly which clause fragments triggered individual normative breaches (ISO/GDPR mappings).
+- **[Interpretability System Overhaul]**: Bypassed generic sequence Attention Rollout in favor of class-specific Gradient-Weighted Attention (`logit.backward()`). Features native stop-word routing penalization and mathematically isolates exactly which clause fragments triggered individual individual normative breaches (ISO/GDPR mappings).
+- **[Architecture Paradigm Shift]**: Completely deprecated standard multi-label sequence classification `MultiLabelClassificationHead` inside `PrERTPipeline` due to high false-positive 'Bag of Words' vulnerability. Forcibly restructured the core `PrERTEncoder` and downstream pipeline into a Natural Language Inference (NLI) machine, chaining explicit failure hypotheses to original document streams to interrogate DeBERTa's explicit contextual entailment graphs.
+- **[Generative Agent Layer]**: Initialized `cnm_agent.py` acting natively inside the LangChain ecosystem to run unstructured generation models. Bypassed binary probability masking arrays forcing explicit textual hypothesis explanation mapping into the backend REST API payload schema underneath a `thought_process` node.
+- **[Hybrid Two-Staged Architecture]**: Re-enabled the `NLIClassificationHead` and `AttentionExplainer` loops in the pipeline to restore accurate statistical token maps. Updated `CNMAgent`'s LangChain templates to operate exclusively as a cognitive describer bridging DeBERTa's gradient outputs rather than serving as the baseline text classifier.

@@ -7,7 +7,7 @@ import io
 import re
 import uuid
 import chromadb
-import fitz  # PyMuPDF
+import fitz
 import os
 from dotenv import load_dotenv
 
@@ -36,7 +36,6 @@ class ContextMemoryBank:
 
     def store(self, segment: str, metadata: dict) -> None:
         doc_id = str(uuid.uuid4())
-        # Default embedding function will automatically embed the segment text
         self.collection.add(
             documents=[segment],
             metadatas=[metadata],
@@ -57,7 +56,6 @@ class ContextMemoryBank:
                     "segment": doc,
                     "metadata": meta
                 })
-        # Maintain narrative causality by sorting by chunk index
         context_list.sort(key=lambda x: x["metadata"].get("chunk_idx", 0))
         return context_list
 
@@ -66,7 +64,6 @@ class DocumentIngestor:
         self.memory_bank = ContextMemoryBank()
 
     def _semantic_chunking(self, text: str) -> list:
-        # Split conceptually by major structural boundaries (common in legal texts)
         raw_chunks = re.split(r'(?=\n(?:Article|Section|Clause)\s+\d)', text, flags=re.IGNORECASE)
         
         refined_chunks = []
@@ -77,7 +74,6 @@ class DocumentIngestor:
                 p = p.strip()
                 if not p:
                     continue
-                # Aggregate short sentences into robust chunks to maintain global context
                 if len(current_merged) + len(p) < 500:
                     current_merged += " " + p if current_merged else p
                 else:
@@ -108,3 +104,9 @@ class DocumentIngestor:
             self.memory_bank.store(seg, {"chunk_idx": idx, "source": "pdf", "session_id": session_id})
         
         return self.memory_bank
+
+    def process_document(self, content: bytes | str, is_pdf: bool, session_id: str) -> ContextMemoryBank:
+        if is_pdf:
+            return self.process_pdf(content, session_id)
+        else:
+            return self.process_text(str(content), session_id)

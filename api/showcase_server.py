@@ -34,17 +34,23 @@ class PolicyAnalysisRequest(BaseModel):
 class TokenHighlight(BaseModel):
     token: str
     weight: float
+    category: str  # 'red' (trigger), 'green' (context), 'blue' (safe)
 
 class AuditTrailEntry(BaseModel):
-    chunk: int
-    trigger_text: str
-    highlighted_tokens: list[TokenHighlight]
-    violated_control: str
+    control_name: str
+    triggered_status: bool
+    triggered_text: str
+    cnm_reason: str
+    cause_heatmap: list[TokenHighlight]
+
+class ViolatedControl(BaseModel):
+    control: str
     confidence: float
 
 class AnalysisResult(BaseModel):
     status: str
     total_flags: int
+    violated_controls: list[ViolatedControl]
     audit_trail: list[AuditTrailEntry]
 
 @app.post("/analyze", response_model=AnalysisResult)

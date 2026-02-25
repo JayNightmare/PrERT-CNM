@@ -55,10 +55,17 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 - **[Completed]** Created `tests/generate_synthetic_policies.py` to auto-generate baseline test cases (Perfect, Mixed, Absolute Violation) for explicit unit testing boundary conditions without dataset noise.
 - **[Completed]** Refactored `PrERTPipeline` and `AttentionExplainer` to conform to a mathematically rigorous `{"token": str, "weight": float}` JSON structure, perfectly mirroring the model's true attention matrices directly to the frontend.
 - **[Completed]** Overhauled Interpretability Engine to utilize Gradient-Weighted Attention (via `logit.backward(retain_graph=True)`) over naive attention rollout. This maps tokens to specific predicted ISO classes and strictly penalizes DeBERTa structural 'sink' routing words.
+- **[Completed]** Executed a total paradigm shift from Multi-Label Sequence Classification to Natural Language Inference (NLI) to mitigate generic "Bag of Words" false positives. Extracted contextual hypotheses from `iso_targets.json` schemas, pairing them against text chunks directly in the `PrERTEncoder`. Attention explainer now directly hooks onto the exact contextual gradient of the "Entailment" logit.
+- **[Completed]** Substituted final logical classifiers with a full 'Contextual Neural Memory' generative entity (`cnm_agent.py`) utilizing LangChain and HuggingFace Pipelines. Enforced strict Pydantic JSON outputs (`ComplianceReasoning`) demanding natural language Chain-of-Thought mappings before assigning regulatory flags to definitively align with the NIST AI Risk Management Framework goal of a 'Glass-box' architecture.
+- **[Completed]** Engineered the Hybrid PrERT-CNM architecture. Reinstalled DeBERTa-v3 as the mathematical Perceptual Layer (to handle entailment likelihood and exact attention token gradients). Configured the Mistral-7B LLM as the Cognitive Layer, invoked strictly on violations to provide concise context combining the raw semantic string via LangChain alongside the DeBERTa `salience_weight` distributions.
+- **[Completed]** Hybrid Tri-Color UI and Broad-Context Memory Loop: Successfully overhauled the `Interactive_Showcase.html` interface to display mathematical attention gradients via explicitly colored Red/Green/Blue token CSS matrices. Integrated the semantic `ContextMemoryBank` to serve bounding segment data (chunk-1, chunk, chunk+1) to the API payload, empowering Mistral-7B to perform highly contextual normative analysis on DeBERTa's isolated tokens.
+- **[Completed]** Resolved HuggingFace Pipeline warnings related to `max_length` and `max_new_tokens` conflicts during Mistral generation by explicitly overriding the specific model `generation_config`.
+- **[Completed]** Refactored inference pipeline into strict 5-step execution sequence integrating Ingest, Encode, Attention Heatmaps, and CNM Reasoning Outputs, optimizing schema for UI consumption.
+- **[Completed]** Created advanced fine-tuning scaffold for DeBERTa utilizing K-Fold cross-validation on the OPP-115 dataset to rigorously prevent data leakage during Month 2 training sweeps.
 
 ## Next Steps
 
-- Execute full training sweep for Month 2 using the fetched OPP-115 corpus and the `PrivacyFeatureExtractor`.
+- Integrate fine-tuning loop results into the broader CI/CD pipeline and evaluate final CV metrics against the >92.5% accuracy target.
 
 ## Architectural Decisions
 
