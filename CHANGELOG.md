@@ -12,8 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- **[Architecture Rollback & Selective Inference Gating]** Restored the Hybrid Architecture where DeBERTa-v3 acts as the primary logical classifier evaluating strict ISO hypotheses via NLI entailment matching. Rewrote `pipeline.py` to enforce strict operational sequences where Heatmap Extraction and Agent Reasoning are only initiated for clauses that DeBERTa formally calculates as violations (`prob > 0.5`).
+- **[CNM Agent Inference Capping]** Rescinded Mistral's classification rights in `cnm_agent.py` by removing the `is_compliant` boolean array. The LangChain prompt explicitly forces purely reasoning outputs (_why did the mathematical model trigger a violation?_) to strictly mitigate false-positive regulatory noise.
 - **[Rigorous Pipeline Execution]** Rewrote `prert/pipeline.py` to strip inline comments and strictly guarantee a traceable 5-step sequential flow: Ingest -> Encode (DeBERTa) -> Extract Attention (Heatmap) -> CNM Agent Reasoning (Mistral) -> Finish/Output. Explicitly logs each state transition for observability.
-- Refactored `prert/ingestion.py`, `prert/attention.py`, and `prert/cnm_agent.py` to remove inline comments and align method signatures (`process_document`, `extract_heatmap`, `generate_reasoning`) with the strict 5-step unified flow architecture.
 - Refactored `prert/pipeline.py` to calculate explicit Pass/Fail states for all mapped ISO controls regardless of violation.
 - Expanded the `TokenHighlight` engine to bin normalized DeBERTa attention gradients into categorical Red (High Risk), Green (Contextual), and Blue (Safe) token buckets.
 - Injected wider `broader_context` document slices directly from the `ContextMemoryBank` into the Mistral `PromptTemplate` to enhance LLM reasoning constraints.

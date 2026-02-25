@@ -7,20 +7,22 @@ import json
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import uuid
+from pathlib import Path
+from langchain_huggingface import HuggingFacePipeline
+from transformers import pipeline as hf_pipeline
+from dotenv import load_dotenv
+
 from .ingestion import DocumentIngestor
 from .encoder import PrERTEncoder
 from .attention import AttentionExplainer
+from .cnm_agent import CNMAgent
 
 class PrERTPipeline:
     def __init__(self):
         self.ingestor = DocumentIngestor()
         self.encoder = PrERTEncoder()
-        
         self.explainer = AttentionExplainer(class_weights={"iso_27001": 1.5, "gdpr": 1.2})
-        
-        from langchain_huggingface import HuggingFacePipeline
-        from transformers import pipeline as hf_pipeline
-        from dotenv import load_dotenv
         
         load_dotenv()
         
@@ -47,11 +49,8 @@ class PrERTPipeline:
             print(f"Warning: Failed to load Generative LLM: {str(e)}")
             self.llm = None
             
-        from .cnm_agent import CNMAgent
         self.agent = CNMAgent(self.llm) if self.llm else None
         
-        import json
-        from pathlib import Path
         schema_path = Path(__file__).parent.parent.parent / "data" / "schemas" / "iso_targets.json"
         
         self.iso_mapping = {}
@@ -73,7 +72,6 @@ class PrERTPipeline:
         self.label_keys = list(self.iso_mapping.keys())
 
     def process_document(self, content: bytes | str, is_pdf: bool = False, status_updater=None) -> dict:
-        import uuid
         session_id = str(uuid.uuid4())
         
         if status_updater: status_updater("Parsing document into semantic chunks using ChromaDB...")
@@ -110,54 +108,49 @@ class PrERTPipeline:
                 last_layer_attn = attentions[-1]
                 last_layer_attn.retain_grad()
                 
-                # NLI Model logit indices: 0: contradiction, 1: entailment, 2: neutral
                 entailment_logit = logits[0, 1]
                 probs = F.softmax(logits, dim=-1)
                 prob = probs[0, 1].item()
                 
-                if status_updater: status_updater(f"Extracting transformer attention rollout for chunk {idx+1}/{len(all_chunks)}...")
-                heatmap = self.explainer.extract_heatmap(
-                    entailment_logit, last_layer_attn, inputs.input_ids, self.encoder.tokenizer
-                )
-                print("Completed Attention Seeking")
+                is_compliant = prob <= 0.5
+                thought_process = "Segment is mathematically compliant."
+                suspect_tokens = []
+                salience_tokens_str = ""
                 
-                suspect_tokens = sorted(heatmap, key=lambda x: x["weight"], reverse=True)[:15]
-                
-                if suspect_tokens:
-                    max_weight = suspect_tokens[0]["weight"]
-                    for t in suspect_tokens:
-                        t["weight"] = (t["weight"] / max_weight) if max_weight > 0 else 0.0
-                        
-                        if prob > 0.5:
-                            if t["weight"] > 0.7:
-                                t["category"] = "red"
-                            elif t["weight"] > 0.3:
-                                t["category"] = "green"
-                            else:
-                                t["category"] = "blue"
-                        else:
-                            if t["weight"] > 0.5:
-                                t["category"] = "green"
-                            else:
-                                t["category"] = "blue"
-                                
-                salience_tokens_str = ", ".join([f"{t['token']} (Weight: {t['weight']:.2f})" for t in suspect_tokens if t["category"] in ["red", "green"]])
-                
-                if self.agent:
-                    if status_updater: status_updater(f"Evaluating contextual compliance with Mistral-7B for chunk {idx+1}/{len(all_chunks)}...")
-                    analysis = self.agent.generate_reasoning(salience_tokens_str, broader_context, text, violated_control)
-                    is_compliant = analysis.get("is_compliant", prob <= 0.5)
-                    thought_process = analysis.get("thought_process", "No reasoning provided.")
-                else:
-                    is_compliant = prob <= 0.5
-                    thought_process = "Generative Agent offline. Relying on mathematical Zero-Shot."
-
                 if not is_compliant:
                     total_flags += 1
                     violated_controls.append({
                         "control": violated_control,
                         "confidence": float(prob)
                     })
+                    
+                    if status_updater: status_updater(f"Extracting transformer attention rollout for chunk {idx+1}/{len(all_chunks)}...")
+                    heatmap = self.explainer.extract_heatmap(
+                        entailment_logit, last_layer_attn, inputs.input_ids, self.encoder.tokenizer
+                    )
+                    print("Completed Attention Seeking")
+                    
+                    suspect_tokens = sorted(heatmap, key=lambda x: x["weight"], reverse=True)[:15]
+                    
+                    if suspect_tokens:
+                        max_weight = suspect_tokens[0]["weight"]
+                        for t in suspect_tokens:
+                            t["weight"] = (t["weight"] / max_weight) if max_weight > 0 else 0.0
+                            if t["weight"] > 0.7:
+                                t["category"] = "red"
+                            elif t["weight"] > 0.3:
+                                t["category"] = "green"
+                            else:
+                                t["category"] = "blue"
+                                    
+                    salience_tokens_str = ", ".join([f"{t['token']} (Weight: {t['weight']:.2f})" for t in suspect_tokens if t["category"] in ["red", "green"]])
+                    
+                    if self.agent:
+                        if status_updater: status_updater(f"Evaluating contextual compliance with Mistral-7B for chunk {idx+1}/{len(all_chunks)}...")
+                        analysis = self.agent.generate_reasoning(salience_tokens_str, broader_context, text, violated_control)
+                        thought_process = analysis.get("thought_process", "No reasoning provided.")
+                    else:
+                        thought_process = "Generative Agent offline. Relying on mathematical Zero-Shot entailment."
                         
                 audit_trail.append({
                     "control_name": violated_control,

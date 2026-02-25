@@ -16,7 +16,7 @@ load_dotenv()
 class ContextMemoryBank:
     def __init__(self, collection_name: str = None):
         if collection_name is None:
-            collection_name = os.getenv("CHROMA_COLLECTION_NAME") or os.getenv("CHROMADB_COLLECTION_NAME")
+            collection_name = os.getenv("CHROMA_COLLECTION_NAME")
             if not collection_name:
                 raise ValueError("Missing ChromaDB collection name. Please set CHROMADB_COLLECTION_NAME in .env")
             

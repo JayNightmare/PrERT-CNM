@@ -9,8 +9,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from pydantic import BaseModel, Field
 
 class ComplianceReasoning(BaseModel):
-    is_compliant: bool = Field(description="True if the text segment complies with the control, False if it violates the control.")
-    thought_process: str = Field(description="A concise, single-paragraph reasoning explaining why the text violates or complies with the control.")
+    thought_process: str = Field(description="A concise, single-paragraph reasoning explaining why the text violates the control.")
 
 class CNMAgent:
     def __init__(self, llm):
@@ -18,7 +17,7 @@ class CNMAgent:
         self.parser = JsonOutputParser(pydantic_object=ComplianceReasoning)
         
         template = """[INST] You are an expert Privacy and Security Auditor. 
-Your task is to determine whether the given text segment complies with or violates the specified compliance control. Provide a concise, single-paragraph explanation of your reasoning based on the extracted tokens and broader context.
+A mathematical model has already proven that the following text segment VIOLATES the specified compliance control. Your task is strictly to provide a concise, single-paragraph explanation of WHY this text segment violates the control, using the extracted tokens and broader context to form your reasoning. You must not re-evaluate the compliance status.
 
 Triggered Text Segment:
 "{text_segment}"
@@ -26,7 +25,7 @@ Triggered Text Segment:
 Broader Document Context:
 "{broader_context}"
 
-Control to Evaluate:
+Control Violated:
 {violated_control}
 
 High-Salience Tokens (Extracted by DeBERTa):
@@ -35,8 +34,7 @@ High-Salience Tokens (Extracted by DeBERTa):
 Respond entirely with a markdown JSON block explicitly matching this structure:
 ```json
 {{
-  "is_compliant": false,
-  "thought_process": "<Provide your unique explanation here based on the text segment>"
+  "thought_process": "<Provide your explanation here based on the text segment>"
 }}
 ```
 
