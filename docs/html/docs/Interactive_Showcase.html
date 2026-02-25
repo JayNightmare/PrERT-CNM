@@ -179,32 +179,37 @@
 
                         if (data.audit_trail && data.audit_trail.length > 0) {
                             data.audit_trail.forEach((entry) => {
-                                let tokensHtml = entry.highlighted_tokens
+                                const heatmap = entry.cause_heatmap || [];
+                                let tokensHtml = heatmap
                                     .map(
                                         (t) =>
                                             `<span class="salience-token token-${t.category}">${t.token}</span>`,
                                     )
                                     .join("");
 
-                                const isCompliant = entry.is_compliant;
+                                const isCompliant = !entry.triggered_status;
                                 const iconHtml = isCompliant
                                     ? `<span class="icon-tick">✅</span>`
                                     : `<span class="icon-cross">❌</span>`;
                                 const borderClass = isCompliant
                                     ? "entry-compliant"
                                     : "entry-violating";
-                                const statusLabel = isCompliant
-                                    ? "Passed"
-                                    : `Failed (Conf: ${(entry.confidence * 100).toFixed(1)}%)`;
+
+                                let statusLabel = "Passed";
+                                if (!isCompliant) {
+                                    const match = data.violated_controls.find(
+                                        (v) => v.control === entry.control_name,
+                                    );
+                                    const conf = match ? match.confidence : 0;
+                                    statusLabel = `Failed (Conf: ${(conf * 100).toFixed(1)}%)`;
+                                }
 
                                 auditContainer.innerHTML += `
                                     <details class="audit-entry ${borderClass}">
-                                        <summary>${iconHtml} <span class="audit-control-name">${entry.violated_control}</span> - ${statusLabel}</summary>
+                                        <summary>${iconHtml} <span class="audit-control-name">${entry.control_name}</span> - ${statusLabel}</summary>
                                         <div style="margin-top: 15px;">
-                                            <p><strong>Trigger Text (Chunk ${entry.chunk}):</strong><br/> <em>"${entry.trigger_text}"</em></p>
-                                            <p><strong>Surrounding Context Evaluated:</strong></p>
-                                            <div class="context-box">${entry.context_text}</div>
-                                            <p><strong>NLI Agent Thought Process:</strong><br/> <em style="color: #a0aec0;">${entry.thought_process}</em></p>
+                                            <p><strong>Trigger Text:</strong><br/> <em>"${entry.triggered_text}"</em></p>
+                                            <p><strong>NLI Agent Thought Process:</strong><br/> <em style="color: #a0aec0;">${entry.cnm_reason}</em></p>
                                             <p><strong>High Salience Tokens (Transformer Attention):</strong><br/> <div class="audit-chunk">${tokensHtml}</div></p>
                                         </div>
                                     </details>
