@@ -1,0 +1,56 @@
+Policy 2 - Mixed Compliance:
+
+
+Section 1: Operational Clauses
+
+We collect account and activity information to personalize experiences and maintain product quality, but retention controls differ across internal teams.
+
+Credential data is protected with standard encryption practices, while selected telemetry signals are retained for model diagnostics over extended windows.
+
+Users can request deletion workflows, but some analytical records are kept for ongoing experimentation and trend analysis.
+
+We may share aggregated usage insights with strategic marketing partners, while claiming those datasets are anonymized.
+
+Location-based services are active during feature use and can influence recommendations even when users are not explicitly reviewing privacy toggles.
+
+
+
+Section 2: Operational Clauses
+
+We collect account and activity information to personalize experiences and maintain product quality, but retention controls differ across internal teams.
+
+Credential data is protected with standard encryption practices, while selected telemetry signals are retained for model diagnostics over extended windows.
+
+Users can request deletion workflows, but some analytical records are kept for ongoing experimentation and trend analysis.
+
+We may share aggregated usage insights with strategic marketing partners, while claiming those datasets are anonymized.
+
+Location-based services are active during feature use and can influence recommendations even when users are not explicitly reviewing privacy toggles.
+
+
+
+Section 3: Operational Clauses
+
+We collect account and activity information to personalize experiences and maintain product quality, but retention controls differ across internal teams.
+
+Credential data is protected with standard encryption practices, while selected telemetry signals are retained for model diagnostics over extended windows.
+
+Users can request deletion workflows, but some analytical records are kept for ongoing experimentation and trend analysis.
+
+We may share aggregated usage insights with strategic marketing partners, while claiming those datasets are anonymized.
+
+Location-based services are active during feature use and can influence recommendations even when users are not explicitly reviewing privacy toggles.
+
+
+
+Section 4: Operational Clauses
+
+We collect account and activity information to personalize experiences and maintain product quality, but retention controls differ across internal teams.
+
+Credential data is protected with standard encryption practices, while selected telemetry signals are retained for model diagnostics over extended windows.
+
+Users can request deletion workflows, but some analytical records are kept for ongoing experimentation and trend analysis.
+
+We may share aggregated usage insights with strategic marketing partners, while claiming those datasets are anonymized.
+
+Location-based services are active during feature use and can influence recommendations even when users are not explicitly reviewing privacy toggles.

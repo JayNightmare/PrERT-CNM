@@ -52,6 +52,7 @@ class AuditTrailEntry(BaseModel):
     triggered_text: str
     cnm_reason: str
     cause_heatmap: list[TokenHighlight]
+    attempts: int
 
 class ViolatedControl(BaseModel):
     control: str

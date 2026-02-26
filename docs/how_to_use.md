@@ -83,22 +83,22 @@ Download and install `cloudflared` for your platform:
 
 - **macOS (Homebrew):**
 
-  ```bash
-  brew install cloudflared
-  ```
+     ```bash
+     brew install cloudflared
+     ```
 
 - **Windows (winget):**
 
-  ```bash
-  winget install --id Cloudflare.cloudflared
-  ```
+     ```bash
+     winget install --id Cloudflare.cloudflared
+     ```
 
 - **Linux (Debian/Ubuntu):**
 
-  ```bash
-  curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
-  sudo dpkg -i cloudflared.deb
-  ```
+     ```bash
+     curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
+     sudo dpkg -i cloudflared.deb
+     ```
 
 #### Start the Tunnel
 
@@ -199,6 +199,8 @@ Execution of the complete CI/CD test suite simulating adversarial compliance ano
 
 **Expected Result:**
 All unit tests should pass indicating that the risk indicators are mapped perfectly, uncertainty bounds are correctly mathematically restricted, and the HuggingFace trainers correctly compute tokenized arrays.
+
+For explicit high-risk statements (e.g., selling personal data, no encryption, indefinite retention, forced opt-in without consent), the pipeline includes an absolute-violation safety layer. If the model path misses these statements, the safety layer forces a non-compliant result and adds an `Absolute Violation Safety Layer` entry to `violated_controls` and `audit_trail`.
 
 **Commands:**
 Run the complete testing suite ensuring no module caching conflicts:

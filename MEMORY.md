@@ -65,6 +65,7 @@ Therefore, Month 1's true deliverable must structurally align with this 2-stage 
 - **[Completed]** Conducted comprehensive Sprint 1 Review and generated `docs/Sprint_1_Review.md`, identifying critical missing regulatory source texts for ingestion.
 - **[Completed]** Transitioned PrERT-CNM evaluation logic from DeBERTa Zero-Shot probabilities to Generative Agent-Driven (Mistral LLM) compliance checking to proactively capture complex, absolute compliance violations.
 - **[Completed]** Rolled back to Hybrid Architecture. Reinstated DeBERTa-v3 as the strict mathematical gatekeeper, evaluating NLI Entailment logits directly against dynamic ISO hypotheses. Restored Generative Agent (Mistral LLM) strictly to a reasoning explainer triggered _only_ by mathematical violations, restoring explicit confidence bounds and fixing the 100% false-positive collapse caused by the full LLM classification approach.
+- **[Completed]** Implemented Agentic Reflection loop. Upgraded CNMAgent into a dual-agent system (Review Agent + Test Agent) to deeply evaluate DeBERTa mathematical flags for false positives and self-correct logic up to 3 attempts, allowing the pipeline to autonomously distinguish between actual violations and contextual noise.
 
 ## Next Steps
 

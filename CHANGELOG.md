@@ -12,8 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- **[Agentic Reflection Pipeline]** Upgraded CNMAgent into a dual-agent configuration (Review Agent and Test Agent). Implemented an internal retry loop inside `pipeline.py` allowing the Cognitive Layer (Mistral LLM) to test and critique its own reasoning for false-positives/true-negatives up to 3 times before overriding the DeBERTa violation flag.
 - **[Architecture Rollback & Selective Inference Gating]** Restored the Hybrid Architecture where DeBERTa-v3 acts as the primary logical classifier evaluating strict ISO hypotheses via NLI entailment matching. Rewrote `pipeline.py` to enforce strict operational sequences where Heatmap Extraction and Agent Reasoning are only initiated for clauses that DeBERTa formally calculates as violations (`prob > 0.5`).
-- **[CNM Agent Inference Capping]** Rescinded Mistral's classification rights in `cnm_agent.py` by removing the `is_compliant` boolean array. The LangChain prompt explicitly forces purely reasoning outputs (_why did the mathematical model trigger a violation?_) to strictly mitigate false-positive regulatory noise.
+- **[CNM Agent Inference Capping]** Constrained Mistral's classification scope in `cnm_agent.py` to a bounded review/test loop with structured outputs (`is_compliant`, `is_correct`, `feedback`) and a max-attempt safety cap, reducing false-positive regulatory noise while preserving controlled override behavior.
 - **[Rigorous Pipeline Execution]** Rewrote `prert/pipeline.py` to strip inline comments and strictly guarantee a traceable 5-step sequential flow: Ingest -> Encode (DeBERTa) -> Extract Attention (Heatmap) -> CNM Agent Reasoning (Mistral) -> Finish/Output. Explicitly logs each state transition for observability.
 - Refactored `prert/pipeline.py` to calculate explicit Pass/Fail states for all mapped ISO controls regardless of violation.
 - Expanded the `TokenHighlight` engine to bin normalized DeBERTa attention gradients into categorical Red (High Risk), Green (Contextual), and Blue (Safe) token buckets.
