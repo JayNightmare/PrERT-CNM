@@ -154,4 +154,4 @@ async def get_analysis_status(task_id: str):
 @app.get("/health")
 async def health_check():
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    return {"status": "ok", "pipeline_initialized": pipeline is not None, "server_version": os.getenv("SERVER_VERSION", "unknown"), "uvicorn_version": uvicorn.__version__}
