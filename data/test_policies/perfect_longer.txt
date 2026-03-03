@@ -1,4 +1,4 @@
-Policy 1 - Perfect Compliance:
+Policy 1:
 
 
 Section 1: Operational Clauses
